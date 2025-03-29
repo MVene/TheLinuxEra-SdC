@@ -91,23 +91,23 @@ El **speedup** es una métrica clave para evaluar el incremento en el rendimient
 
 Utilizando la fórmula:
 
-$ Speedup = \frac{Tiempo\ en\ CPU\ más\ lenta}{Tiempo\ en\ CPU\ más\ rápida}$
+$Speedup = \frac{Tiempo\ en\ CPU\ más\ lenta}{Tiempo\ en\ CPU\ más\ rápida}$
 
 - **Comparacion AMD Ryzen 9 7950X vs AMD Ryzen 9 5900X:**
 
-    $ Speedup ≈ \frac{97}{53} ≈ 1.83 $
+    $Speedup ≈ \frac{97}{53} ≈ 1.83$
 
 Esto indica que el *Ryzen 9 7950x* es aproximadamente 83% más rápido en la compilación del kernel que el *Ryzen 9 5900X*.
 
 - **Comparación AMD Ryzen 9 7950X vs Intel Core i5-13600K:**
 
-    $ Speedup ≈ \frac{83}{53} ≈ 1.57 $
+    $Speedup ≈ \frac{83}{53} ≈ 1.57$
 
 Es decir, *el Ryzen 9 7950X* es cerca de un 57% más rápido que el *i5-13600K*.
 
 - **Comparación Intel Core i5-13600K vs AMD Ryzen 9 5900X:**
 
-    $ Speedup ≈ \frac{97}{83} ≈ 1.17 $
+    $Speedup ≈ \frac{97}{83} ≈ 1.17$
 
 El *i5-13600K* resulta alrededor de un 17% más rápido que el *Ryzen 9 5900X*.
 
