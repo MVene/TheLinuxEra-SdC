@@ -4,13 +4,13 @@
 
 El objetivo de este trabajo práctico es aplicar conocimientos sobre performance y rendimiento de los computadores en situaciones prácticas. Se busca:
 
-    1. Evaluar y seleccionar benchmarks apropiados para diferentes tareas computacionales, con énfasis en aquellos relevantes para actividades diarias.
+  **1.** Evaluar y seleccionar benchmarks apropiados para diferentes tareas computacionales, con énfasis en aquellos relevantes para actividades diarias.
 
-    2. Analizar el rendimiento de diferentes procesadores en tareas específicas como la compilación del kernel de Linux.
+  **2.** Analizar el rendimiento de diferentes procesadores en tareas específicas como la compilación del kernel de Linux.
 
-    3. Medir el rendimiento de código propio en una ESP32, variando la frecuencia de reloj y observando su impacto en el rendimiento.
+  **3.** Medir el rendimiento de código propio en una ESP32, variando la frecuencia de reloj y observando su impacto en el rendimiento.
 
-    4. Profiling y análisis de rendimiento del código. 
+  **4.** Profiling y análisis de rendimiento del código. 
 
 ---
 
@@ -54,7 +54,7 @@ A continuación, se detallan algunos benchmarks relevantes según distintos tipo
 | Análisis de datos           | LINPACK, TensorFlow Benchmark  |
 | Edición de video            | Cinebench, 3DMark              |
 | Juegos                      | 3DMark, Unigine Superposition  |
-| Uso general (ofimática, navegación) | Geekbench, PCMark       |
+| Uso general (navegación) | Geekbench, PCMark       |
 
 ---
 
@@ -76,15 +76,12 @@ De acuerdo con los resultados públicos obtenidos en OpenBenchmarking para la co
 
 *AMD Ryzen 9 7950X 16-Core:*
 Tiempo promedio ≈ 53 ± 3 segundos
-(Cita: [138] AMD Ryzen 9 7950X 16-Core)
 
 *AMD Ryzen 9 5900X 12-Core:*
 Tiempo promedio ≈ 97 ± 6 segundos
-(Cita: [179] AMD Ryzen 9 5900X 12-Core)
 
 *Intel Core i5-13600K:*
 Tiempo promedio ≈ 83 ± 3 segundos
-(Cita: [170] Intel Core i5-13600K)
 
 ### **🔹 3.3 Cálculo del Speedup**
 El **speedup** es una métrica clave para evaluar el incremento en el rendimiento de un sistema tras una optimización o al compararlo con otro. En el contexto de la compilación del kernel de Linux, el **speedup** indica cuánto más rápido es un procesador en comparación con otro. Se calcula dividiendo el tiempo de ejecución en la CPU más lenta por el tiempo en la CPU más rápida. Esta medida es fundamental para analizar la eficiencia de sistemas que operan en entornos de alto rendimiento
@@ -132,7 +129,69 @@ En resumen, para tareas exigentes como la compilación del kernel de Linux, el *
 
 ## **4️⃣ Ejercicio 3: Análisis de Rendimiento en ESP32**
 
-### **🔹 4.1 Implementación y pruebas de código**
+### **🔹 4.1 Configuración del Entorno de Desarrollo**
+
+Se utilizó la extensión PlatformIO en VS Code para programar la ESP32, permitiendo un entorno de desarrollo avanzado y flexible. Para ello:
+
+  1.  Se instaló la extensión PlatformIO en Visual Studio Code.
+
+  2. Se configuró un nuevo proyecto para ESP32, seleccionando la placa específica y los parámetros adecuados.
+
+  3. Se modificó el archivo platformio.ini para definir la frecuencia de la CPU y otras configuraciones relevantes.
+
+<div style="text-align: center;">
+    <img src="Imagenes/3-3.jpeg" alt="Descripción" width="200">
+</div>
+
+  4. Se utilizaron las bibliotecas adecuadas, incluyendo la API de Arduino para ESP32, que permite modificar la frecuencia del procesador y realizar mediciones de tiempo. Se emplearon funciones como setCpuFrequencyMhz() para ajustar la frecuencia y millis() para registrar los tiempos de ejecución de las operaciones.
+
+
+### **🔹 4.2 Carga y Ejecución del Código**
+
+Se realizaron pruebas con frecuencias de 80 MHz y 160 MHz, midiendo el rendimiento de operaciones matemáticas con enteros y flotantes. Los resultados obtenidos fueron:
+
+<div style="text-align: center;">
+    <img src="Imagenes/3-1.jpeg" alt="Descripción" width="500">
+</div>
+
+
+<div style="text-align: center;">
+    <img src="Imagenes/3-2.jpeg" alt="Descripción" width="500">
+</div>
+
+### **🔹 4.3 Tabla de Resultados**
+
+| Frecuencia (MHz) | Iteraciones | Tiempo suma enteros (ms) | Tiempo suma flotantes (ms) | Rendimiento (iteraciones/ms) |
+|------------------|-------------|--------------------------|----------------------------|-----------------------|
+| 80 MHz           | 26.000.000  | 9973                     | 9973                       | 2607.1                |
+| 160 MHz          | 26.000.000  | 4930                     | 4930                       | 5271.6                |
+
+### **🔹 4.4 Cálculo de SpeedUp**
+1. Cálculo del rendimiento por iteración (iteraciones/ms)
+
+    Primero, calculamos el rendimiento de cada configuración en términos de iteraciones por milisegundo (iteraciones/ms). El rendimiento se puede calcular como la cantidad de iteraciones dividida por el tiempo en milisegundos.
+
+    - Para **80 MHz**:
+      
+      $R_{80} = \frac{26,000,000}{9973} \approx 2607.1 \ \text{iter/ms}$
+
+
+    - Para **160 MHz**:
+
+      $R_{160} = \frac{26,000,000}{4930} \approx 5271.6 \ \text{iter/ms}$
+2. Cálculo del Speedup
+
+    El **speedup** se calcula ahora como la relación entre el rendimiento en la frecuencia más alta (160 MHz) y el rendimiento en la frecuencia más baja (80 MHz).
+
+
+      $Speedup = \frac{R_{160}}{R_{80}} = \frac{5271.6}{2607.1} \approx 2.02$
+
+Este valor indica que, al duplicar la frecuencia de la CPU de **80 MHz** a **160 MHz**, el rendimiento de las operaciones realizadas (suma de enteros y flotantes) mejora aproximadamente **2.02 veces**. Es decir, el sistema es **más de dos veces más rápido** a 160 MHz en comparación con 80 MHz.
+
+### **🔹 4.5 Conclusiones Finales**
+
+El **speedup** de **2.02** es bastante cercano a la duplicación esperada del rendimiento debido al aumento de la frecuencia de la CPU. Esto sugiere que, para esta tarea específica (sumas de enteros y flotantes), el rendimiento sigue una relación casi lineal con la frecuencia de la CPU. Sin embargo, este comportamiento puede variar dependiendo de la naturaleza de las tareas, ya que en algunas situaciones el rendimiento puede no escalar de manera tan lineal debido a otros factores como la latencia de memoria, la arquitectura del procesador y las optimizaciones del compilador.
+
 
 ## **5️⃣ Ejercicio 4: Profiling y análisis de rendimiento del código**
 
