@@ -1,45 +1,59 @@
 #include <Arduino.h>
 
-void medirTiempoOperaciones(int frecuencia) {
-  // Configurar la frecuencia de la CPU
-  setCpuFrequencyMhz(frecuencia);
-  Serial.printf("\n--- Frecuencia de CPU configurada: %d MHz ---\n", frecuencia);
-  Serial.printf("Frecuencia real: %d MHz\n", getCpuFrequencyMhz());  // Verificación
-
-  const int loop_count = 26000000; // Número de iteraciones para las pruebas
-  Serial.printf("Número de iteraciones: %d\n", loop_count);
-
-  unsigned long inicio, fin, tiempo;
-  volatile int sumaEnteros = 0;
-  volatile float sumaFlotantes = 0.0;
-
-  // Medir tiempo para sumas con enteros
-  inicio = millis();
-  for (volatile int i = 0; i < loop_count; i++) {
-      sumaEnteros += i;
-  }
-  fin = millis();
-  tiempo = (fin - inicio); 
-  Serial.printf("Tiempo suma enteros: %lu ms\n", tiempo);
-
-  // Medir tiempo para sumas con float
-  inicio = millis();
-  for (volatile int i = 0; i < loop_count; i++) {
-      sumaFlotantes += 0.5f;
-  }
-  fin = millis();
-  tiempo = (fin - inicio);
-  Serial.printf("Tiempo suma flotantes: %lu ms\n", tiempo);
-}
+void sumaInt();
+void sumaFloat();
+unsigned long total_time = 0;
 
 void setup() {
-  Serial.begin(115200);
-  delay(1000); // Esperar a que el puerto serie esté listo
+  Serial.begin(115200);  // Inicia la comunicación serial
+  delay(2000);  // Espera para abrir el monitor serial
 
-  Serial.println("Medición de tiempo de operaciones aritméticas:");
-  medirTiempoOperaciones(160); // Frecuencia de CPU a 80 MHz
+  // Setear la frecuencia
+  setCpuFrequencyMhz(80);
+  Serial.print("Frecuencia: ");
+  Serial.print(getCpuFrequencyMhz());
+  Serial.println(" MHz");
+
+  sumaInt();
+  sumaFloat();
+
+  Serial.print("Tiempo total: ");
+  Serial.print(total_time);
+  Serial.println(" ms");
+}
+
+// Bucle de sumas con enteros durante 5 segundos
+void sumaInt() {
+  unsigned long startTime = millis();
+  unsigned long currentTime = startTime;
+  volatile int sumInt = 0;
+  for (int i = 0; i < 35000000; i++) {
+    sumInt += 1;
+  }
+  currentTime = millis();
+  unsigned long tiempo = currentTime - startTime;
+  total_time = tiempo;
+  Serial.print("Tiempo suma de enteros: ");
+  Serial.print(tiempo);
+  Serial.println(" ms");
+}
+
+// Bucle de sumas con floats durante 5 segundos
+void sumaFloat() {
+  unsigned long startTime = millis();
+  unsigned long currentTime = startTime;
+  volatile float sumFloat = 0.0;
+  for (int i = 0; i < 35000000; i++) {
+    sumFloat += 0.1f;
+  }
+  currentTime = millis();
+  unsigned long tiempo = currentTime - startTime;
+  total_time += tiempo;
+  Serial.print("Tiempo suma de floats: ");
+  Serial.print(tiempo);
+  Serial.println(" ms");
 }
 
 void loop() {
-  // No se necesita código en el bucle principal
+  // No es necesario
 }

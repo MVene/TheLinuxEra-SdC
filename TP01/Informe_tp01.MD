@@ -151,46 +151,46 @@ Se utilizó la extensión PlatformIO en VS Code para programar la ESP32, permiti
 Se realizaron pruebas con frecuencias de 80 MHz y 160 MHz, midiendo el rendimiento de operaciones matemáticas con enteros y flotantes. Los resultados obtenidos fueron:
 
 <div style="text-align: center;">
-    <img src="Imagenes/3-1.jpeg" alt="Descripción" width="500">
+    <img src="Imagenes/3-1.jpeg" alt="Descripción" width="300">
 </div>
 
 
 <div style="text-align: center;">
-    <img src="Imagenes/3-2.jpeg" alt="Descripción" width="500">
+    <img src="Imagenes/3-2.jpeg" alt="Descripción" width="300">
 </div>
+
 
 ### **🔹 4.3 Tabla de Resultados**
 
-| Frecuencia (MHz) | Iteraciones | Tiempo suma enteros (ms) | Tiempo suma flotantes (ms) | Rendimiento (iteraciones/ms) |
-|------------------|-------------|--------------------------|----------------------------|-----------------------|
-| 80 MHz           | 26.000.000  | 9973                     | 9973                       | 2607.1                |
-| 160 MHz          | 26.000.000  | 4930                     | 4930                       | 5271.6                |
+| Frecuencia (MHz) | Iteraciones | Tiempo suma enteros (ms) | Tiempo suma flotantes (ms) | Tiempo total (ms) | Rendimiento (1/s) |
+|------------------|-------------|--------------------------|----------------------------|-------------------|-------------------|
+| 80 MHz           | 35.000.000  | 4981                     | 5887                       | 10868             | 0.000092          |
+| 160 MHz          | 35.000.000  | 2447                     | 2892                       | 5339              | 0.000187          |
+
 
 ### **🔹 4.4 Cálculo de SpeedUp**
-1. Cálculo del rendimiento por iteración (iteraciones/ms)
+1. Cálculo del rendimiento (1/s)
 
-    Primero, calculamos el rendimiento de cada configuración en términos de iteraciones por milisegundo (iteraciones/ms). El rendimiento se puede calcular como la cantidad de iteraciones dividida por el tiempo en milisegundos.
+    Primero, calculamos el rendimiento para cada frecuencia usando la fórmula: ηprog = 1 / Tprog
 
     - Para **80 MHz**:
       
-      $R_{80} = \frac{26,000,000}{9973} \approx 2607.1 \ \text{iter/ms}$
-
+      ηprog = 1 / 10868 ms ≈ 0.000092 s⁻¹
 
     - Para **160 MHz**:
 
-      $R_{160} = \frac{26,000,000}{4930} \approx 5271.6 \ \text{iter/ms}$
+      ηprog = 1 / 5339 ms ≈ 0.000187 s⁻¹
 2. Cálculo del Speedup
 
     El **speedup** se calcula ahora como la relación entre el rendimiento en la frecuencia más alta (160 MHz) y el rendimiento en la frecuencia más baja (80 MHz).
 
+      $Speedup = \frac{ηprog_{160}}{ηprog_{80}} = \frac{0.000187}{0.000092} \approx 2.03$
 
-      $Speedup = \frac{R_{160}}{R_{80}} = \frac{5271.6}{2607.1} \approx 2.02$
-
-Este valor indica que, al duplicar la frecuencia de la CPU de **80 MHz** a **160 MHz**, el rendimiento de las operaciones realizadas (suma de enteros y flotantes) mejora aproximadamente **2.02 veces**. Es decir, el sistema es **más de dos veces más rápido** a 160 MHz en comparación con 80 MHz.
+Este valor indica que, al duplicar la frecuencia de la CPU de **80 MHz** a **160 MHz**, el rendimiento mejora aproximadamente **2.03 veces**. Es decir, el sistema es **más de dos veces más rápido** a 160 MHz en comparación con 80 MHz.
 
 ### **🔹 4.5 Conclusiones Finales**
 
-El **speedup** de **2.02** es bastante cercano a la duplicación esperada del rendimiento debido al aumento de la frecuencia de la CPU. Esto sugiere que, para esta tarea específica (sumas de enteros y flotantes), el rendimiento sigue una relación casi lineal con la frecuencia de la CPU. Sin embargo, este comportamiento puede variar dependiendo de la naturaleza de las tareas, ya que en algunas situaciones el rendimiento puede no escalar de manera tan lineal debido a otros factores como la latencia de memoria, la arquitectura del procesador y las optimizaciones del compilador.
+El **speedup** de **2.03** es bastante cercano a la duplicación esperada del rendimiento debido al aumento de la frecuencia de la CPU. Esto sugiere que, para esta tarea específica (sumas de enteros y flotantes), el rendimiento sigue una relación casi lineal con la frecuencia de la CPU. Sin embargo, este comportamiento puede variar dependiendo de la naturaleza de las tareas, ya que en algunas situaciones el rendimiento puede no escalar de manera tan lineal debido a otros factores como la latencia de memoria, la arquitectura del procesador y las optimizaciones del compilador.
 
 
 ## **5️⃣ Ejercicio 4: Profiling y análisis de rendimiento del código**
