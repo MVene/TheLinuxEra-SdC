@@ -243,6 +243,4 @@ A pesar de que el Intel Core i7-7500U es teóricamente más potente, su tiempo t
 
 
 
----
-
-
+----
