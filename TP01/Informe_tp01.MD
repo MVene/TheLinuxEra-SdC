@@ -241,6 +241,4 @@ El análisis de Time Profiling muestra diferencias en el tiempo de ejecución de
 A pesar de que el Intel Core i7-7500U es teóricamente más potente, su tiempo total de 24.17s no refleja una ventaja significativa sobre el i5. Posiblemente debido a la falta de una instalación nativa de Linux.
 
 
-
-
-----
+---
