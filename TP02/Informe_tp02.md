@@ -1,13 +1,14 @@
 # TP02 – Sistemas de Computación  
 
-´´´
-TP02/
-├─ src/
-│  ├─ api_rest.py       # Script Python para consumir API y preparar datos
-│  └─ main.c            # Biblioteca en C que implementa la función convert()
-└─ scripts/
-   └─ build_and_run.sh  # Script de automatización: venv, dependencias, compilación y ejecución
-´´´
+```
+    TP02/
+    ├─ src/
+    │  ├─ api_rest.py       # Script Python para consumir API y preparar datos
+    │  └─ main.c            # Biblioteca en C que implementa la función convert()
+    └─ scripts/
+    └─ build_and_run.sh  # Script de automatización: venv, dependencias, compilación y ejecución
+```
+
 ## Primera Iteración – API REST, Python y C
 
 ### 🔹 Objetivo
@@ -28,9 +29,11 @@ Se desarrolló un script en Python (`api_rest.py`) que:
 - Consulta la API REST del Banco Mundial.
 - Extrae los valores del índice GINI para Argentina.
 - Filtra los datos no nulos.
-- Los guarda en la lista `gini_values` con el formato `año,valor`.
+- Los guarda en la lista `data` con el formato `año,valor`.
+- Copia los valores GINI a un arreglo `input_array`, que luego se pasará como argumento para el programa en C.
+- Luego de que se procesan los datos, los imprime.
 
-#### Ejemplo de datos generados (`gini_data.txt`)
+#### Ejemplo de datos obtenidos
 
         1980,40.8
         1986,42.8
@@ -69,33 +72,69 @@ while (fgets(linea, MAX_LINEA, archivo)) {
     <img src="Imagenes/1-1.png" alt="Salida por consola" width="300">
 </div>
 
-## Segunda Iteración – 
+## Segunda Iteración – Python, C, Assembler x64 y GDB
 
 ### 🔹 Objetivo
 
-En la segunda etapa de este trabajo práctico se busca:
-- Añadir un programa en Assembler que realice la tarea de conversión a entero y sumar uno.
+En esta segunda etapa, se busca expandir el trabajo realizado en la primera iteración mediante la implementación de los siguientes items:
+- Añadir un programa en Assembler que realice la tarea de conversión a entero y sumar uno (en lugar de realizarse en C).
 - Utilizar la herramienta `gdb` para realizar un debug del código en Assembler.
-- Mediante la misma, poder visualizar el estado del stack.
+- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack.
 
 ### 🐍 Script en Python
 
-Se desarrolló un script en Python (`api_rest.py`) que:
+El script en Python (`api_rest.py`) permanece sin cambios, es decir que sigue realizando las siguientes tareas:
 - Consulta la API REST del Banco Mundial.
 - Extrae los valores del índice GINI para Argentina.
 - Filtra los datos no nulos.
 - Los guarda en la lista `data` con el formato `año,valor`.
+- Copia los valores GINI a un arreglo `input_array`, que luego se pasará como argumento para el programa en C.
+- Luego de que se procesan los datos, los imprime.
 
-#### Ejemplo de datos generados (`gini_data.txt`):
-        1980,40.8
-        1986,42.8
-        1987,45.3
-        ...
+### ⚙️ Capa intermedia en C
 
+- El archivo `main.c` lee uno por uno cada elemento del arreglo y se lo pasa a una función en Assembler para realizar la conversión.
+- Cada valor convertido se guarda en un arreglo de salida, que luego serán presentados en el script de Python.
 
----
+__Fragmento del programa:__
+```c
+//Declaracion externa de funcion ASM
+extern int convertir_float_a_int(float value);  //funcion en ASM
 
-### ⚙️ Procesamiento en C
+void convert(float* input, int* output, int size){
+    for(int i = 0; i < size; i++){
+        output[i] = convertir_float_a_int(input[i]);
+    }
+}
+```
 
-- El archivo `main.c` lee uno por uno cada elemento del arreglo y se lo pasa a una función en Assembler para convertirlo a entero.
-- Cada valor convertido se guarda en un arreglo de salida, que luego será presentado en el script de Python.
+### 🧱 Procesamiento en Assembler x64
+
+Se utilizó Assembler de 64 bits para _matchear_ las arquitecturas con respecto al script de Python.
+
+- El programa recibe un valor en cada llamado, desde la función en C, al registro `xmm0`.
+- Lo trunca a entero y lo mueve a `EAX`. 
+- Le suma 1 (uno) al registro mencionado.
+- Restablece el stack.
+- Retorna al programa en C.
+
+__Fragmento del programa:__
+```asm
+convertir_float_a_int:
+    ; 64-bit Linux calling convention:
+    ; - float arg is in xmm0
+    ; - Return value: int in eax
+
+    sub rsp, 8             ; Reservar espacio stack
+
+    cvttss2si eax, xmm0    ; Convertir float a int
+    add eax, 1             ; Agregar 1 al resultado
+
+    add rsp, 8
+    ret
+```
+
+### 🐛 GNU Debugger
+
+La última sección del trabajo implica adquirir conocimientos acerca de los comandos básicos de GDB y sus respectivas utilizaciones, con el fin de realizar el debug de programas. 
+
