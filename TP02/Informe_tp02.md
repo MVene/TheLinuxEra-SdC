@@ -18,7 +18,7 @@ En esta primera etapa del Trabajo Práctico #2 se busca:
 - Obtener datos reales del índice GINI de Argentina desde la API REST del Banco Mundial.
 - Filtrar y ordenar los datos en Python.
 - Exportar una función en C para procesar esos datos (convertir de float a int y sumar 1).
-- Integrar Python y C mediante ctypes.
+- Integrar Python y C mediante `ctypes`.
 
 ---
 
@@ -56,12 +56,10 @@ El archivo `main.c` lee línea por línea el archivo `gini_data.txt`. Por cada e
 
 ```c
 void convert(float* input, int* output, int size) {
- 
     for(int i = 0; i < size; i++){
         output[i] = (int) input[i];
         output[i] += 1;
     }
-
 }
 ```
 
@@ -79,7 +77,7 @@ void convert(float* input, int* output, int size) {
 En esta segunda etapa, se busca expandir el trabajo realizado en la primera iteración mediante la implementación de los siguientes items:
 - Añadir un programa en Assembler que realice la tarea de conversión a entero y sumar uno (en lugar de realizarse en C).
 - Utilizar la herramienta `gdb` para realizar un debug del código en Assembler.
-- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del st
+- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack
 
 ---
 
