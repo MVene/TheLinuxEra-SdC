@@ -1,20 +1,19 @@
 ; procesamiento64.asm
+
 section .text
     global convertir_float_a_int
 
 ; int convertir_float_a_int(float gini);
 
 convertir_float_a_int:
-    ; 64-bit Linux calling convention:
-    ; - float arg is in xmm0
-    ; - Return value: int in eax
+    ; Convención de llamadas en Linux x86_64:
+    ;   - El argumento de tipo float se pasa en el registro xmm0
+    ;   - El valor de retorno de tipo int se devuelve en el registro eax
 
-    sub rsp, 8             ; Reserve stack space (aligning stack)
-
-    cvttss2si eax, xmm0    ; Convert float in xmm0 to int -> eax (truncates)
-    add eax, 1             ; Add 1 to result
-
-    add rsp, 8             ; Restore stack
+    cvttss2si eax, xmm0    ; Convertir el valor float en xmm0 a int en eax (trunca)
+    add eax, 1             ; Sumar 1 al valor entero resultante
+          
     ret
 
-section .note.GNU-stack noalloc noexec nowrite
+section .note.GNU-stack noalloc noexec nowrite ; Indica que la pila no debe ser ejecutable
+

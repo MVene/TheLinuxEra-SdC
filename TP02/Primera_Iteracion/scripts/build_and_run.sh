@@ -24,7 +24,6 @@ gcc -c -o main.o ../src/main.c
 echo "Creando librería compartida..."
 gcc -shared -o main.so main.o
 
-
 # Ejecutar el script de Python
 echo "Ejecutando script de Python..."
 python3 ../src/api_rest.py
