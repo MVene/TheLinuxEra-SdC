@@ -33,7 +33,7 @@ Se desarrolló un script en Python (`api_rest.py`) que:
 - Copia los valores GINI a un arreglo `input_array`, que luego se pasará como argumento para el programa en C.
 - Luego de que se procesan los datos, los imprime.
 
-#### Ejemplo de datos obtenidos
+#### Ejemplo de datos obtenidos:
 
         1980,40.8
         1986,42.8
@@ -47,26 +47,26 @@ Se desarrolló un script en Python (`api_rest.py`) que:
 
 El archivo `main.c` lee línea por línea el archivo `gini_data.txt`. Por cada entrada:
 
-- Se separan el año y el valor GINI (float).
-- Se convierte el valor de `float` a `int`.
-- Se le suma 1 al valor convertido.
-- Se imprimen el año, el valor original y el valor procesado.
+- Se recorre el array y se convierte cada valor de `float` a `int`.
+- Se le suma 1 (uno) al valor convertido.
+- Los resultados se guardan en el array `output`.
 
 #### Fragmento de código:
 
 
 ```c
-
-while (fgets(linea, MAX_LINEA, archivo)) {
-    if (sscanf(linea, "%d,%f", &anio, &gini) == 2) {
-        gini_convertido = (int)gini + 1;
-        printf("Año %d: GINI original = %.2f, convertido = %d\n", anio, gini, gini_convertido);
+void convert(float* input, int* output, int size) {
+ 
+    for(int i = 0; i < size; i++){
+        output[i] = (int) input[i];
+        output[i] += 1;
     }
+
 }
 ```
 
 
-### Ejemplo de salida por consola:
+#### Ejemplo de salida por consola:
 
 <div style="text-align: center;">
     <img src="Imagenes/1-1.png" alt="Salida por consola" width="300">
@@ -79,7 +79,9 @@ while (fgets(linea, MAX_LINEA, archivo)) {
 En esta segunda etapa, se busca expandir el trabajo realizado en la primera iteración mediante la implementación de los siguientes items:
 - Añadir un programa en Assembler que realice la tarea de conversión a entero y sumar uno (en lugar de realizarse en C).
 - Utilizar la herramienta `gdb` para realizar un debug del código en Assembler.
-- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack.
+- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del st
+
+---
 
 ### 🐍 Script en Python
 
@@ -91,12 +93,14 @@ El script en Python (`api_rest.py`) permanece sin cambios, es decir que sigue re
 - Copia los valores GINI a un arreglo `input_array`, que luego se pasará como argumento para el programa en C.
 - Luego de que se procesan los datos, los imprime.
 
+---
+
 ### ⚙️ Capa intermedia en C
 
 - El archivo `main.c` lee uno por uno cada elemento del arreglo y se lo pasa a una función en Assembler para realizar la conversión.
 - Cada valor convertido se guarda en un arreglo de salida, que luego serán presentados en el script de Python.
 
-__Fragmento del programa:__
+#### Fragmento del programa:
 ```c
 //Declaracion externa de funcion ASM
 extern int convertir_float_a_int(float value);  //funcion en ASM
@@ -108,6 +112,8 @@ void convert(float* input, int* output, int size){
 }
 ```
 
+---
+
 ### 🧱 Procesamiento en Assembler x64
 
 Se utilizó Assembler de 64 bits para _matchear_ las arquitecturas con respecto al script de Python.
@@ -118,7 +124,7 @@ Se utilizó Assembler de 64 bits para _matchear_ las arquitecturas con respecto 
 - Restablece el stack.
 - Retorna al programa en C.
 
-__Fragmento del programa:__
+#### Fragmento del programa:
 ```asm
 convertir_float_a_int:
     ; 64-bit Linux calling convention:
@@ -134,7 +140,8 @@ convertir_float_a_int:
     ret
 ```
 
+---
+
 ### 🐛 GNU Debugger
 
 La última sección del trabajo implica adquirir conocimientos acerca de los comandos básicos de GDB y sus respectivas utilizaciones, con el fin de realizar el debug de programas. 
-
