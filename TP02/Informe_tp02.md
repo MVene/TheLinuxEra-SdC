@@ -2,7 +2,7 @@
 
 ## Primera Iteración – API REST, Python y C
 
-### 🔹 Objetivo
+#### 🔹 Objetivo
 
 En esta primera etapa del Trabajo Práctico #2 se busca:
 
@@ -13,11 +13,11 @@ En esta primera etapa del Trabajo Práctico #2 se busca:
 
 ---
 
-### 🐍 Script en Python (api_rest.py)
+#### 🐍 Script en Python (api_rest.py)
 
 El script de python realiza lo siguiente:
 
-#### 1- Consulta HTTP a la API del Banco Mundial
+##### 1- Consulta HTTP a la API del Banco Mundial
 
 ```python
 
@@ -26,7 +26,7 @@ url = "http://api.worldbank.org/v2/country/AR/indicator/SI.POV.GINI?format=json&
 response = requests.get(url)
 ```
 
-#### 2- Parseo y filtrado del JSON
+##### 2- Parseo y filtrado del JSON
 
 ```python
 data = response.json()
@@ -41,7 +41,7 @@ for entry in data[1]:
 gini_values.sort()
 ```
 
-#### 3- Preparación de arrays C usando ctypes
+##### 3- Preparación de arrays C usando ctypes
 
 ```python
 # Guardar años y valores en arrays
@@ -53,7 +53,7 @@ input_array = (ctypes.c_float * length)(*float_values)
 output_array = (ctypes.c_int * length)()
 ```
 
-#### 4- Invocación de la función C
+##### 4- Invocación de la función C
 
 ```python
 # Cargar la libreria
@@ -71,7 +71,7 @@ def convert(input, output, length):
     lib.convert(input, output, length)
 ```
 
-#### 5- Impresión de resultados
+##### 5- Impresión de resultados
 
 ```python
 result = np.ctypeslib.as_array(output_array)
@@ -84,7 +84,7 @@ for i in range(length):
 
 ---
 
-### ⚙️ Procesamiento en C
+#### ⚙️ Procesamiento en C
 
 Se implementó la función convert, compilada como biblioteca compartida (main.so):
 
@@ -101,7 +101,7 @@ Convierte cada float a int truncando y luego sumando 1.
 
 ---
 
-### 🔧 Script de automatización (build_and_run.sh)
+#### 🔧 Script de automatización (build_and_run.sh)
 
 El script monta todo el flujo en un entorno virtual y compila la biblioteca:
 
@@ -138,23 +138,23 @@ python3 ../src/api_rest.py
 
 ```
 
-### Salida por consola
+#### Salida por consola
 
 ![Salida por consola](Imagenes/1-1.png)
 
 ## Segunda Iteración – Python, C, Assembler x64 y GDB
 
-### 🔹 Objetivo
+#### 🔹 Objetivo
 
 En esta segunda etapa, se busca expandir el trabajo realizado en la primera iteración mediante la implementación de los siguientes items:
 
 - Añadir un programa en Assembler que realice la tarea de conversión a entero y sumar uno (en lugar de realizarse en C).
 - Utilizar la herramienta `gdb` para realizar un debug del código en Assembler.
-- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack
+- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack.
 
 ---
 
-### 🐍 Script en Python
+#### 🐍 Script en Python
 
 El script en Python (`api_rest.py`) permanece sin cambios, es decir que sigue realizando las siguientes tareas:
 
@@ -167,12 +167,12 @@ El script en Python (`api_rest.py`) permanece sin cambios, es decir que sigue re
 
 ---
 
-### ⚙️ Capa intermedia en C
+#### ⚙️ Capa intermedia en C
 
 - El archivo `main.c` lee uno por uno cada elemento del arreglo y se lo pasa a una función en Assembler para realizar la conversión.
 - Cada valor convertido se guarda en un arreglo de salida, que luego serán presentados en el script de Python.
 
-#### Fragmento del programa:
+##### Fragmento del programa:
 ```c
 //Declaracion externa de funcion ASM
 extern int convertir_float_a_int(float value);  //funcion en ASM
@@ -186,7 +186,7 @@ void convert(float* input, int* output, int size){
 
 ---
 
-### 🧱 Procesamiento en Assembler x64
+#### 🧱 Procesamiento en Assembler x64
 
 Se utilizó Assembler de 64 bits para _matchear_ las arquitecturas con respecto al script de Python.
 
@@ -209,25 +209,27 @@ convertir_float_a_int:
     ret
 ```
 
-### Salida por consola
+#### Salida por consola
 
 ![Salida por consola](Imagenes/2-1.png)
+
+---
 
 ### 🐛 GNU Debugger
 
 La última parte del trabajo consistió en utilizar GDB (GNU Debugger) para inspeccionar el comportamiento del programa en tiempo de ejecución, especialmente en lo referente a la llamada desde C a una función implementada en Assembler.
 
-### 🔍 Objetivo
+#### 🔍 Objetivo
 
 El objetivo fue entender cómo se realiza el paso de parámetros entre C y Assembler en arquitectura x86_64, y visualizar el contenido de los registros utilizados, ya que en este caso los argumentos no se pasan por la pila, sino a través de registros.
 
-### 🧠 Observaciones
+#### 🧠 Observaciones
 
 - El parámetro float que se pasa desde C a la función `convertir_float_a_int` en ASM se coloca automáticamente en el registro `xmm0`.
 - El valor de retorno de tipo int se guarda en el registro `eax`.
 - Por este motivo, la pila no contiene los argumentos, y se deben inspeccionar directamente estos registros.
 
-### 🛠️ Proceso
+#### 🛠️ Proceso
 
 Para facilitar la depuración:
 
@@ -240,23 +242,23 @@ info registers xmm0
 info registers eax
 ```
 
-### 📸 Capturas
+#### 📸 Capturas
 
 A continuación se incluyen capturas del estado de los registros antes y después de ejecutar la función ASM, verificando la correcta recepción del valor en `xmm0` y el resultado almacenado en `eax`.
 
-#### Captura 1 – Inicializando la sesión de depuración
+##### Captura 1 – Inicializando la sesión de depuración
 
 Se colocan breakpoints en las funciones `convert` y `convertir_float_a_int`. Luego con el comando `run` se ejecuta el programa `debug.c`
 
 ![GDB](Imagenes/2-2.1.png)
 
-#### Captura 2 – Antes de ingresar a la función en ASM
+##### Captura 2 – Antes de ingresar a la función en ASM
 
 Inspeccionamos el contenido del registro `xmm0` con el comando `info registers xmm0` antes de entrar a la función `convertir_float_a_int`. En la salida de GDB, el registro se muestra con múltiples interpretaciones. El valor del parámetro float pasado desde C se puede encontrar en el primer elemento del campo `v4_float`, ya que este representa una vista de `xmm0` como un vector de cuatro valores de 32 bits (precisión simple), que es el formato estándar para los float en C. En este punto, el registro no ha sido inicializado por el compilador con el valor correspondiente, por lo que muestra datos basura o residuales. Esta captura sirve para evidenciar que el valor aún no fue pasado a la función.
 
 ![GDB](Imagenes/2-2.2.png)
 
-#### Captura 3 – Dentro de la función en ASM
+##### Captura 3 – Dentro de la función en ASM
 
 Ahora el campo `v4_float` muestra como primer valor de 32 bits a `0x3f9d70a4` el cual representa el número en coma flotante pasado desde C. Dicho valor corresponde aproximadamente a 1.23.
 
@@ -264,7 +266,7 @@ El registro `eax` ya poseía un valor numérico que podría llevar a la confusi�
 
 ![GDB](Imagenes/2-2.3.png)
 
-#### Captura 4 – Dentro de la función en ASM
+##### Captura 4 – Dentro de la función en ASM
 
 Para confirmar el momento exacto en el que se produce la conversión, se avanzó una instrucción con:
 
