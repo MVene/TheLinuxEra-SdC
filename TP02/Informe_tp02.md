@@ -10,6 +10,7 @@ En esta primera etapa del Trabajo Práctico #2 se busca:
 - Filtrar y ordenar los datos en Python.
 - Exportar una función en C para procesar esos datos (convertir de float a int y sumar 1).
 - Integrar Python y C mediante `ctypes`.
+- Integrar Python y C mediante `ctypes`.
 
 ---
 
@@ -150,7 +151,9 @@ En esta segunda etapa, se busca expandir el trabajo realizado en la primera iter
 
 - Añadir un programa en Assembler que realice la tarea de conversión a entero y sumar uno (en lugar de realizarse en C).
 - Utilizar la herramienta `gdb` para realizar un debug del código en Assembler.
-- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack.
+- Mediante la misma, observar direcciones, valores que almacenan y visualizar el estado del stack
+
+---
 
 ### 🐍 Script en Python
 
@@ -163,12 +166,14 @@ El script en Python (`api_rest.py`) permanece sin cambios, es decir que sigue re
 - Copia los valores GINI a un arreglo `input_array`, que luego se pasará como argumento para el programa en C.
 - Luego de que se procesan los datos, los imprime.
 
+---
+
 ### ⚙️ Capa intermedia en C
 
 - El archivo `main.c` lee uno por uno cada elemento del arreglo y se lo pasa a una función en Assembler para realizar la conversión.
 - Cada valor convertido se guarda en un arreglo de salida, que luego serán presentados en el script de Python.
 
-__Fragmento del programa:__
+#### Fragmento del programa:
 ```c
 //Declaracion externa de funcion ASM
 extern int convertir_float_a_int(float value);  //funcion en ASM
@@ -179,6 +184,8 @@ void convert(float* input, int* output, int size){
     }
 }
 ```
+
+---
 
 ### 🧱 Procesamiento en Assembler x64
 
