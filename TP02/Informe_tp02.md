@@ -10,7 +10,6 @@ En esta primera etapa del Trabajo Práctico #2 se busca:
 - Filtrar y ordenar los datos en Python.
 - Exportar una función en C para procesar esos datos (convertir de float a int y sumar 1).
 - Integrar Python y C mediante `ctypes`.
-- Integrar Python y C mediante `ctypes`.
 
 ---
 
