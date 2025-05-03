@@ -224,8 +224,13 @@ Cuando se configura el descriptor de segmento de datos con los bits de acceso ma
 
      - Triple fault y reinicio automático del sistema (común en emuladores como QEMU).
 
+![modoprotegido](Imagenes/2-1.jpeg)
 
-
+![modoprotegido](Imagenes/2-2.jpeg)
 
 
 #### En modo protegido, ¿con qué valor se cargan los registros de segmento?, ¿por qué? 
+
+Cuando un sistema pasa de modo real a modo protegido, los registros de segmento, como CS (Code Segment), DS (Data Segment), SS (Stack Segment), ES, FS, y GS, son cargados con valores que corresponden a selectores de segmentos válidos en la GDT (Global Descriptor Table).
+
+Un selector de segmento en modo protegido no es una dirección física, sino un índice que apunta a una entrada dentro de la GDT o LDT. Los valores de los registros de segmento son selectores que apuntan a las descripciones de segmentos en la GDT, que contienen información como la base, el límite, los atributos de acceso y el estado del segmento.
