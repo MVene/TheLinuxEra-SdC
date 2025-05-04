@@ -6,8 +6,6 @@
 
 - Identificar cómo se forman y traducen las direcciones lógicas y físicas en ambos modos.
 
-- Analizar cómo se accede a la memoria utilizando segmentación en modo real y segmentación + paginación en modo protegido.
-
 - Aplicar los conceptos vistos en clase para interpretar estructuras como GDT, descriptores de segmento y direcciones físicas en modo protegido.
 
 - Afianzar el conocimiento sobre la arquitectura x86 y el manejo de la memoria según el modo de operación del procesador.
@@ -16,22 +14,23 @@
 
 ### ⚙️ UEFI y Coreboot
 
-#### **¿Qué es UEFI? ¿Cómo puedo usarlo? Mencionar además una función a la que podría llamar usando esa dinámica.**
+#### **1.1- ¿Qué es UEFI? ¿Cómo puedo usarlo? Mencionar además una función a la que podría llamar usando esa dinámica.**
 
 UEFI (Unified Extensible Firmware Interface) es una interfaz de firmware moderna que reemplaza al BIOS tradicional. Su objetivo es inicializar el hardware y cargar el sistema operativo, pero con una arquitectura más flexible, modular y segura que BIOS.
 
-Podés usar UEFI para:
+*Podés usar UEFI para:*
 
-Configurar hardware antes de que se inicie el SO.
+- Configurar hardware antes de que se inicie el SO.
 
-Cargar un cargador de arranque (como GRUB).
+- Cargar un cargador de arranque (como GRUB).
 
-Acceder a servicios como manejo de memoria, dispositivos, variables persistentes, etc.
+- Acceder a servicios como manejo de memoria, dispositivos, variables persistentes, etc.
 
 Una función típica que podrías llamar usando la API de UEFI es GetMemoryMap, que permite obtener el mapa de memoria actual para que el sistema operativo sepa qué áreas puede usar.
 
-#### **¿Menciona casos de bugs de UEFI que puedan ser explotados?**
-Algunos ejemplos: BUSCCAR QUE PINGO ES
+#### **1.2- Menciona casos de bugs de UEFI que puedan ser explotados**
+
+Algunos ejemplos: 
 
 - **LoJax (2018):** un rootkit persistente que infectaba el firmware UEFI, usando una vulnerabilidad para escribir en la SPI Flash y resistir reinstalaciones del sistema operativo.
 
@@ -41,15 +40,15 @@ Algunos ejemplos: BUSCCAR QUE PINGO ES
 
 Estos bugs son críticos porque se ejecutan a bajo nivel, antes que cualquier antivirus, y pueden persistir incluso al formatear el disco.
 
-#### **¿Qué es Converged Security and Management Engine (CSME), the Intel Management Engine BIOS Extension (Intel MEBx)?**
+#### **1.3- ¿Qué es Converged Security and Management Engine (CSME), the Intel Management Engine BIOS Extension (Intel MEBx)?**
 
 - **CSME (Converged Security and Management Engine)** es un subsistema dentro del chipset Intel que ofrece funciones de seguridad (como TPM, verificación de arranque) y administración remota. Forma parte de Intel ME (Management Engine).
 
-- **Intel MEBx** es una extensión de BIOS que permite configurar funcionalidades del Intel ME, como AMT (tecnología de administración activa). Se accede normalmente al encender la máquina (por ejemplo, presionando Ctrl+P).
+- **Intel MEBx** es una extensión de BIOS que permite configurar funcionalidades del Intel ME, como AMT (tecnología de administración activa). Se accede normalmente al encender la computadora.
 
 Son tecnologías potentes pero también polémicas, ya que operan en un entorno separado del sistema operativo, con acceso privilegiado al hardware.
 
-#### ¿Qué es coreboot? ¿Qué productos lo incorporan? ¿Cuáles son las ventajas de su utilización?
+#### **1.4- ¿Qué es coreboot? ¿Qué productos lo incorporan? ¿Cuáles son las ventajas de su utilización?**
 
 **coreboot** es un firmware de código abierto que reemplaza al BIOS propietario. Su objetivo es realizar la inicialización mínima del hardware y luego pasar el control a un cargador de sistema operativo o payload como SeaBIOS o GRUB.
 
@@ -77,7 +76,7 @@ Son tecnologías potentes pero también polémicas, ya que operan en un entorno 
 
 ### 🔗 Linker
 
-#### ¿Qué es un linker? ¿Qué hace? 
+#### **2.1 ¿Qué es un linker? ¿Qué hace?**
 
 Un linker es una herramienta que toma uno o más archivos objeto generados por el compilador (por ejemplo .o) y los une en un archivo ejecutable final (como .elf, .bin o .exe).
 
@@ -87,10 +86,10 @@ Sus funciones principales son:
 
 - Asignar direcciones de memoria a cada segmento del programa.
 
-- Generar el formato binario final (ej., ELF o binario plano) que puede ejecutarse o grabarse en una memoria.
+- Generar el formato binario final (ejemplo: ELF o binario plano) que puede ejecutarse o grabarse en una memoria.
 
 
-#### ¿Qué es la dirección que aparece en el script del linker? ¿Por qué es necesaria?
+#### **2.2 ¿Qué es la dirección que aparece en el script del linker? ¿Por qué es necesaria?**
 
 En un script de linker (archivo .ld), se especifica una dirección base de carga del programa, como por ejemplo:
 
@@ -108,36 +107,14 @@ Esta dirección (en el ejemplo 0x7C00) indica dónde en la memoria se cargará e
 
 - Es crítica en entornos de bajo nivel, como el arranque (boot), donde el BIOS carga el programa en una posición fija (ej.: 0x7C00 para bootloaders).
 
-#### Compare la salida de ``objdump`` con ``hd``, verifique dónde fue colocado el programa dentro de la imagen. 
-
-- **Direcciones en el archivo objeto (objdump):**
-
-Las secciones del archivo objeto (como .text, .data, .rodata, etc.) están ubicadas en direcciones simbólicas dentro del archivo, todas con direcciones 0x0000000000000000. Esto es típico en los archivos objeto, ya que estas direcciones aún no han sido asignadas a direcciones físicas en la memoria.
-
-- **Direcciones en el archivo ejecutable (hd):**
-
-Al contrastar esto con la salida de hd del archivo ejecutable, vemos que las secciones del programa se han cargado en direcciones de memoria diferentes, que son las que se asignan al archivo ejecutable después de que el enlazador ha trabajado para colocar las secciones en su ubicación final en memoria.
-
-*Ejemplos:*
-
-La sección .text se coloca en la dirección 0x0000000000000060.
-
-La sección .data comienza en 0x0000000000000098.
-
-La sección .rodata comienza en 0x0000000000000180.
-
-El enlazador asigna direcciones físicas a las secciones en la imagen del ejecutable, lo que hace que las direcciones en el archivo ejecutable sean diferentes a las direcciones en el archivo objeto. Las secciones del archivo objeto (como .text, .data y .rodata) tienen direcciones simbólicas (0x0000000000000000), pero una vez que el archivo objeto se enlaza, esas direcciones se resuelven y se colocan en direcciones específicas en la imagen ejecutable, como se puede observar en la salida de hd.
-
-Entonces, el programa se coloca en la imagen del ejecutable en direcciones específicas que están asignadas después de la fase de enlazado.
-
-![objdump](Imagenes/2-1.jpeg)
-
-![hd](Imagenes/2-2.jpeg)
-
-#### Grabar la imagen en un pendrive, probarla en una PC y subir una foto.
+#### **2.3 Compare la salida de objdump con hd, verifique dónde fue colocado el programa dentro de la imagen.**
 
 
-#### ¿Para qué se utiliza la opción ``--oformat binary``  en el linker?
+
+#### **2.4 Grabar la imagen en un pendrive, probarla en una PC y subir una foto.**
+
+
+#### **2.5 ¿Para qué se utiliza la opción --oformat binary  en el linker?**
 
 La opción ``--oformat binary`` en el linker (en este caso, ld) se utiliza para indicar que el archivo de salida debe ser un archivo binario sin ningún tipo de cabecera o metadatos adicionales que suelen incluirse en los archivos objeto o ejecutables.
 
@@ -145,7 +122,7 @@ La opción ``--oformat binary`` en el linker (en este caso, ld) se utiliza para 
 
 ### 🔒 Modo Protegido
 
-#### Crear un código assembler que pueda pasar a modo protegido (sin macros).
+#### **3.1 Crear un código assembler que pueda pasar a modo protegido (sin macros).**
 ```
 [bits 16]        ; Modo real
 org 0x7C00
@@ -193,7 +170,7 @@ dw 0xAA55                  ; Boot signature
 
 ```
 
-#### ¿Cómo sería un programa que tenga dos descriptores de memoria diferentes, uno para cada segmento (código y datos) en espacios de memoria diferenciados?
+#### **3.2 ¿Cómo sería un programa que tenga dos descriptores de memoria diferentes, uno para cada segmento (código y datos) en espacios de memoria diferenciados?**
 
 En la **GDT** (Global Descriptor Table), podemos definir 3 descriptores:
 
@@ -208,7 +185,7 @@ Esto crea:
 
 En modo protegido, los registros de segmento (CS, DS, etc.) usan estos descriptores como base + offset, lo que permite separar físicamente ambos segmentos en RAM.
 
-#### Cambiar los bits de acceso del segmento de datos para que sea de solo lectura. Intentar escribir, ¿qué sucede?, ¿qué debería suceder a continuación? (revisar el teórico). Verificarlo con gdb.
+#### **3.3 Cambiar los bits de acceso del segmento de datos para que sea de solo lectura. Intentar escribir, ¿qué sucede?, ¿qué debería suceder a continuación? (revisar el teórico). Verificarlo con gdb.**
 
 Cuando se configura el descriptor de segmento de datos con los bits de acceso marcando el segmento como solo lectura (por ejemplo, Access Byte = 0x90), el procesador:
 
@@ -224,12 +201,12 @@ Cuando se configura el descriptor de segmento de datos con los bits de acceso ma
 
      - Triple fault y reinicio automático del sistema (común en emuladores como QEMU).
 
-![modoprotegido](Imagenes/2-1.jpeg)
+![modoprotegido](Imagenes/2-3.jpeg)
 
-![modoprotegido](Imagenes/2-2.jpeg)
+![modoprotegido](Imagenes/2-4.jpeg)
 
 
-#### En modo protegido, ¿con qué valor se cargan los registros de segmento?, ¿por qué? 
+#### **3.4 En modo protegido, ¿con qué valor se cargan los registros de segmento?, ¿por qué? **
 
 Cuando un sistema pasa de modo real a modo protegido, los registros de segmento, como CS (Code Segment), DS (Data Segment), SS (Stack Segment), ES, FS, y GS, son cargados con valores que corresponden a selectores de segmentos válidos en la GDT (Global Descriptor Table).
 
