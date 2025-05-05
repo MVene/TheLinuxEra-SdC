@@ -236,7 +236,7 @@ Cuando se configura el descriptor de segmento de datos con los bits de acceso ma
 ![modoprotegido](Imagenes/2-4.jpeg)
 
 
-#### **3.4 En modo protegido, ¿con qué valor se cargan los registros de segmento?, ¿por qué? **
+#### **3.4 En modo protegido, ¿con qué valor se cargan los registros de segmento?, ¿por qué?**
 
 Cuando un sistema pasa de modo real a modo protegido, los registros de segmento, como CS (Code Segment), DS (Data Segment), SS (Stack Segment), ES, FS, y GS, son cargados con valores que corresponden a selectores de segmentos válidos en la GDT (Global Descriptor Table).
 
