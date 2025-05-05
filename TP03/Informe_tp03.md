@@ -93,12 +93,13 @@ Sus funciones principales son:
 
 En un script de linker (archivo .ld), se especifica una dirección base de carga del programa, como por ejemplo:
 
-```
+```ld
 SECTIONS {
   . = 0x7C00;
   .text : { *(.text) }
 }
 ```
+
 Esta dirección (en el ejemplo 0x7C00) indica dónde en la memoria se cargará el programa cuando se ejecute. Es necesaria porque:
 
 - Permite al linker calcular correctamente las direcciones absolutas.
@@ -109,10 +110,39 @@ Esta dirección (en el ejemplo 0x7C00) indica dónde en la memoria se cargará e
 
 #### **2.3 Compare la salida de objdump con hd, verifique dónde fue colocado el programa dentro de la imagen.**
 
+- Salida de comando `hd main.img`
 
+![modoprotegido](Imagenes/2-6.png)
+
+- Salida de comando `objdump -D -b binary -mi8086 main.img`
+
+![modoprotegido](Imagenes/2-7.png)
+![modoprotegido](Imagenes/2-8.png)
+![modoprotegido](Imagenes/2-9.png)
+![modoprotegido](Imagenes/2-10.png)
+![modoprotegido](Imagenes/2-11.png)
+![modoprotegido](Imagenes/2-12.png)
+
+- La salida de `hd main.img` muestra el contenido raw del archivo binario byte a byte, indicando el offset  desde el inicio del archivo para cada línea. Se observó que la secuencia de bytes correspondiente al código ejecutable del programa comienza en el offset 00000000 (el inicio del archivo), seguida por la secuencia de bytes de la cadena "hello world" terminada en nulo. La firma de arranque 0xAA55 (mostrada como 55 aa en little-endian) se encontró en el offset 000001f0.
+
+- La salida de `objdump -D -b binary -mi8086 main.img` desensambló el archivo binario interpretándolo como código de 16 bits (modo 8086). Este desensamblado confirmó que la secuencia de bytes que inicia en el offset 00000000 corresponde efectivamente a las instrucciones del código fuente de main.S. El desensamblado posterior a la sección de código válido mostró interpretaciones incorrectas de los datos (la cadena y el relleno) como instrucciones, lo cual es esperado al desensamblar un binario raw.
+
+La comparación confirma que el linker construyó el archivo main.img colocando el código ejecutable y los datos (la cadena "hello world") al inicio del archivo binario (offset 00000000). Esta posición se corresponde con la dirección de memoria 0x7c00 especificada en el script del linker para la carga del sector de arranque por la BIOS. La firma de arranque 0xAA55 fue colocada correctamente en el offset 000001f0, asegurando que se sitúe al final del primer sector de 512 bytes, como lo requiere el formato de un sector de arranque válido. El espacio intermedio entre el final del programa y la firma fue llenado con padding.
 
 #### **2.4 Grabar la imagen en un pendrive, probarla en una PC y subir una foto.**
 
+Para probar el bootloader en una máquina real, se compiló el código ensamblador (boot.asm) con NASM y se generó una imagen binaria (boot.img). Luego, se grabó la imagen en un pendrive usando el siguiente comando:
+
+```bash
+sudo dd if=boot.img of=/dev/sdX bs=512 count=1
+
+```
+
+Reemplazar /dev/sdX por la ruta correcta del dispositivo USB. 
+
+Finalmente, se conectó el pendrive a una notebook ThinkPad, se configuró la BIOS para arrancar desde el USB, y al iniciar, la pantalla mostró correctamente el mensaje "HELLO THINKPAD!", demostrando que el código se ejecutó directamente desde el sector de arranque.
+
+![modoprotegido](Imagenes/2-5.jpeg)
 
 #### **2.5 ¿Para qué se utiliza la opción --oformat binary  en el linker?**
 
