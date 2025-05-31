@@ -1,0 +1,74 @@
+cpu:
+                       Intel(R) Core(TM) i5-7300U CPU @ 2.60GHz, 2400 MHz
+                       Intel(R) Core(TM) i5-7300U CPU @ 2.60GHz, 2400 MHz
+                       Intel(R) Core(TM) i5-7300U CPU @ 2.60GHz, 2400 MHz
+                       Intel(R) Core(TM) i5-7300U CPU @ 2.60GHz, 2400 MHz
+keyboard:
+  /dev/input/event10   SINO WEALTH Gaming KB
+  /dev/input/event3    AT Translated Set 2 keyboard
+  /dev/input/event20   JBL TUNE510BT (AVRCP)
+mouse:
+                       Logitech Unifying Receiver
+  /dev/input/mice      SynPS/2 Synaptics TouchPad
+  /dev/input/mice      TPPS/2 IBM TrackPoint
+monitor:
+                       BOE CQ LCD Monitor
+                       SAMSUNG SyncMaster
+graphics card:
+                       Intel HD Graphics 620
+sound:
+                       Intel Sunrise Point-LP HD Audio
+storage:
+                       Toshiba XG4 NVMe SSD Controller
+network:
+  enp0s31f6            Intel Ethernet Connection (4) I219-LM
+  wlp4s0               Intel Dual Band Wireless-AC 8265
+network interface:
+  wlp4s0               Ethernet network interface
+  br-e733dc4fee86      Ethernet network interface
+  enp0s31f6            Ethernet network interface
+  veth04fdc5f          Ethernet network interface
+  lo                   Loopback network interface
+  br-63ac668b159c      Ethernet network interface
+  docker0              Ethernet network interface
+disk:
+  /dev/nvme0n1         Toshiba XG4 NVMe SSD Controller
+  /dev/sda             Generic SD/MMC
+partition:
+  /dev/nvme0n1p1       Partition
+  /dev/nvme0n1p2       Partition
+usb controller:
+                       Intel Sunrise Point-LP USB 3.0 xHCI Controller
+bios:
+                       BIOS
+bridge:
+                       Intel Sunrise Point-LP PCI Express Root Port #1
+                       Intel Sunrise Point LPC Controller/eSPI Controller
+                       Intel Xeon E3-1200 v6/7th Gen Core Processor Host Bridge/DRAM Registers
+                       Intel Sunrise Point-LP PCI Express Root Port #11
+                       Intel Sunrise Point-LP PCI Express Root Port #9
+                       Intel Sunrise Point-LP PCI Express Root Port #7
+hub:
+                       Linux Foundation 2.0 root hub
+                       Linux Foundation 3.0 root hub
+memory:
+                       Main Memory
+bluetooth:
+                       Intel Bluetooth wireless interface
+unknown:
+                       FPU
+                       DMA controller
+                       PIC
+                       Keyboard controller
+                       PS/2 Controller
+                       Intel Sunrise Point-LP PMC
+                       Intel Sunrise Point-LP CSME HECI #1
+                       Intel Sunrise Point-LP Active Management Technology - SOL
+                       Intel Sunrise Point-LP Thermal subsystem
+                       Intel Sunrise Point-LP SMBus
+  /dev/ttyS0           16550A
+  /dev/ttyS4           16550A
+                       Validity Sensors Unclassified device
+                       Acer Integrated Camera
+                       Logitech Unifying Receiver
+  /dev/input/event13   SINO WEALTH Gaming KB

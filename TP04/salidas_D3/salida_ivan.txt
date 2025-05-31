@@ -1,0 +1,65 @@
+Module                  Size  Used by
+snd_seq_dummy          12288  0
+snd_hrtimer            12288  1
+snd_seq_midi           24576  0
+snd_seq_midi_event     16384  1 snd_seq_midi
+snd_rawmidi            57344  1 snd_seq_midi
+snd_seq               122880  9 snd_seq_midi,snd_seq_midi_event,snd_seq_dummy
+snd_seq_device         16384  3 snd_seq,snd_seq_midi,snd_rawmidi
+snd_timer              49152  2 snd_seq,snd_hrtimer
+snd                   143360  6 snd_seq,snd_seq_device,snd_timer,snd_rawmidi
+soundcore              16384  1 snd
+qrtr                   53248  2
+intel_rapl_msr         20480  0
+intel_rapl_common      53248  1 intel_rapl_msr
+intel_uncore_frequency_common    16384  0
+intel_pmc_core        118784  0
+intel_vsec             20480  1 intel_pmc_core
+pmt_telemetry          16384  1 intel_pmc_core
+pmt_class              16384  1 pmt_telemetry
+crct10dif_pclmul       12288  1
+polyval_clmulni        12288  0
+polyval_generic        12288  1 polyval_clmulni
+ghash_clmulni_intel    16384  0
+sha256_ssse3           32768  0
+sha1_ssse3             32768  0
+aesni_intel           122880  0
+crypto_simd            16384  1 aesni_intel
+cryptd                 24576  2 crypto_simd,ghash_clmulni_intel
+rapl                   20480  0
+hyperv_drm             20480  0
+i2c_piix4              32768  0
+hyperv_fb              24576  1
+i2c_smbus              16384  1 i2c_piix4
+hv_balloon             45056  0
+input_leds             12288  0
+vmgenid                12288  0
+joydev                 32768  0
+serio_raw              20480  0
+mac_hid                12288  0
+binfmt_misc            24576  1
+sch_fq_codel           24576  2
+msr                    12288  0
+parport_pc             53248  0
+ppdev                  24576  0
+lp                     28672  0
+parport                73728  3 parport_pc,lp,ppdev
+efi_pstore             12288  0
+nfnetlink              20480  1
+dmi_sysfs              24576  0
+ip_tables              32768  0
+x_tables               65536  1 ip_tables
+autofs4                57344  2
+hid_generic            12288  0
+hid_hyperv             16384  0
+hv_storvsc             28672  1
+hv_netvsc             118784  0
+hid                   262144  2 hid_hyperv,hid_generic
+scsi_transport_fc     114688  1 hv_storvsc
+hv_utils               45056  0
+hyperv_keyboard        12288  0
+crc32_pclmul           12288  0
+psmouse               217088  0
+hv_vmbus              176128  8 hv_balloon,hv_utils,hv_netvsc,hid_hyperv,hv_storvsc,hyperv_keyboard,hyperv_drm,hyperv_fb
+floppy                131072  0
+pata_acpi              12288  0
