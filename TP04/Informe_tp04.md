@@ -5,6 +5,82 @@
 ## 🔶 Desafíos
 
 ### Desafío N°1
+#### 1. ¿Qué es checkinstall y para qué sirve?
+
+Checkinstall es una utilidad de línea de comandos para sistemas operativos tipo Unix que facilita la creación de paquetes de instalación (como .deb para Debian/Ubuntu, .rpm para Red Hat/Fedora, o .tgz para Slackware) a partir de software compilado desde las fuentes.
+
+Su principal función es automatizar el proceso de empaquetado de software que, de otro modo, se instalaría directamente en el sistema con make install. Al usar checkinstall, se evita la "contaminación" del sistema de archivos con archivos que no son rastreados por el gestor de paquetes. Permite desinstalar el software de forma limpia y sencilla utilizando las herramientas estándar del sistema (como dpkg -r en Debian/Ubuntu), lo cual es crucial para mantener la integridad del sistema y facilitar la gestión del software. También es útil para distribuir software compilado localmente a otros sistemas o para crear paquetes para repositorios personales.
+
+#### 2. Utilizando checkinstall para empaquetar un hello world
+
+Se procedió a crear y empaquetar un simple programa "Hello World" en C utilizando checkinstall para demostrar su funcionalidad.
+
+**a) Estructura del Proyecto:**
+Se creó un nuevo directorio desafio1 dentro del TP04 para mantener la organización. Dentro de este directorio, se colocaron los siguientes archivos:
+
+- **hello.c**: Código fuente del programa "Hello World".
+
+- **Makefile**: Instrucciones para compilar el programa y la regla install para checkinstall.
+
+**Contenido de hello.c:**
+
+![alt text](Imagenes/1-1.png)
+
+**Contenido de Makefile:**
+
+![alt text](Imagenes/1-2.png)
+
+**b) Proceso de Compilación y Empaquetado:**
+
+**Compilación del programa:**
+
+Dentro del directorio desafio1, se ejecutaron los siguientes comandos:
+
+    make
+
+**Empaquetado e Instalación con checkinstall:**
+
+    sudo checkinstall
+
+Durante la ejecución de checkinstall, se interactuó con sus prompts:
+
+Pregunta por la creación de documentación: [y] (se acepta por defecto) y solicitud de descripción del paquete: Se ingresó "Mi primer paquete Hello World".
+
+![alt text](Imagenes/1-3.png)
+
+   
+Confirmación/Modificación de datos del paquete: Se cambió el nombre del paquete a hello (Opción 2, luego se ingresa hello). Se aceptaron los demás valores por defecto.
+
+![alt text](Imagenes/1-4.png)
+
+![alt text](Imagenes/1-5.png)
+
+![alt text](Imagenes/1-6.png)
+
+**Verificación del paquete instalado con dpkg y ejecución del programa instalado**
+
+![alt text](Imagenes/1-7.png)
+
+#### 3. Seguridad del Kernel
+
+La capacidad del kernel de Linux para cargar módulos dinámicamente es una fortaleza, pero también presenta un vector de ataque si no se gestiona adecuadamente. La seguridad del kernel es primordial, ya que un compromiso a este nivel otorga un control total sobre el sistema.
+
+- **Evitando cargar módulos no firmados:** Una medida de seguridad fundamental es configurar el kernel para que solo cargue módulos que estén firmados digitalmente por una clave de confianza. Esto implica que:
+   - Se genera un par de claves criptográficas (pública/privada). Los módulos legítimos son firmados con la clave privada durante su compilación.
+   El kernel tiene la clave pública correspondiente en su "keyring" (almacén de claves confiables).
+   Antes de cargar un módulo, el kernel verifica su firma. Si la firma es inválida, está ausente o no corresponde a una clave de confianza, el kernel se niega a cargar el módulo. 
+
+- **El peligro de los Rootkits:** Un rootkit es un conjunto de herramientas maliciosas diseñado para ocultar su presencia y la de otros programas maliciosos en un sistema informático, manteniendo el acceso privilegiado (root o administrador). Los rootkits que operan en el espacio del kernel son particularmente peligrosos porque se ejecutan con los máximos privilegios, lo que les permite:
+  - Manipular el sistema operativo a un nivel profundo (interceptar llamadas al sistema).
+  - Ocultar procesos, archivos, conexiones de red o actividad del atacante.
+  - Eludir la detección por parte de la mayoría del software de seguridad del espacio de usuario. Si un sistema permite la carga de módulos no firmados, un atacante podría desarrollar un rootkit como un módulo del kernel y cargarlo, comprometiendo completamente la seguridad del sistema sin ser detectado fácilmente. La verificación de firma de módulos actúa como una barrera crucial contra la introducción de rootkits de kernel.
+
+- **Otras medidas de seguridad desde el kernel:** Además de la firma de módulos, existen otras acciones para fortalecer la seguridad a nivel de kernel:
+  - **Mandatory Access Control (MAC) Frameworks (SELinux, AppArmor):** Permiten definir políticas de seguridad estrictas que restringen el acceso a recursos del sistema incluso para usuarios con privilegios de root.
+  - **KSPP (Kernel Self Protection Project):** Conjunto de iniciativas para endurecer el kernel contra exploits, incluyendo la aleatorización del espacio de direcciones del kernel (KASLR) y la protección de memoria.
+  - **Control de Capacidades (Capabilities):** Permite otorgar solo los privilegios mínimos necesarios a los programas, en lugar de todos los privilegios de root.
+  - **Hardening de parámetros del kernel via sysctl:** Ajuste de configuraciones del kernel para limitar ciertas funcionalidades que podrían ser explotadas.
+
 ### Desafío N°2
 
 
