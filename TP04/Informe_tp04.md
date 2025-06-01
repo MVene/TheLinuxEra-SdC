@@ -2,6 +2,22 @@
 
 ## 🎯 Objetivos
 
+- Comprender el funcionamiento de los módulos del kernel en Linux y su interacción con el espacio de usuario.
+
+- Realizar la compilación, carga, firma, descarga y verificación de módulos personalizados en el sistema.
+
+- Utilizar herramientas como checkinstall para empaquetar software y explorar su utilidad en la administración de paquetes.
+
+- Investigar prácticas seguras de desarrollo para el kernel, como el uso de firmas digitales para prevenir la carga de módulos maliciosos o no verificados.
+
+- Analizar y comparar los módulos del kernel cargados en distintos equipos, y relacionarlos con el hardware detectado.
+
+- Obtener información precisa del hardware real mediante herramientas como hwinfo, y entender su relación con los módulos y drivers del sistema.
+
+- Explorar el contenido del directorio /dev y su función como interfaz entre el kernel (drivers) y los programas de usuario.
+
+- Promover la conciencia sobre la seguridad en el sistema operativo, evitando prácticas que permitan la inserción de rootkits o código no autorizado.
+
 ## 🔶 Desafíos
 
 ### Desafío N°1
@@ -82,7 +98,47 @@ La capacidad del kernel de Linux para cargar módulos dinámicamente es una fort
   - **Hardening de parámetros del kernel via sysctl:** Ajuste de configuraciones del kernel para limitar ciertas funcionalidades que podrían ser explotadas.
 
 ### Desafío N°2
+#### 1.¿Qué funciones tiene disponible un programa y un módulo?
+Un programa, que se ejecuta en el espacio de usuario, puede realizar tareas como leer y escribir archivos, usar la red, ejecutar procesos, solicitar memoria, e interactuar con dispositivos a través del sistema operativo, utilizando llamadas al sistema como open(), read(), write(), etc. Un programa no puede acceder directamente al hardware ni modificar el funcionamiento del kernel.
 
+En cambio, un módulo del kernel tiene acceso directo a funciones internas del sistema. Puede extender las funcionalidades del kernel, controlar dispositivos físicos (como placas de red, sonido, etc.), manejar interrupciones, implementar protocolos o sistemas de archivos, y comunicarse directamente con el hardware. Los módulos se ejecutan con privilegios del kernel, por lo que errores en su código pueden afectar seriamente la estabilidad del sistema.
+
+#### 2.Espacio de usuario o espacio del kernel
+El espacio de usuario es donde se ejecutan los programas normales, como editores de texto, navegadores o scripts. Cada proceso tiene su propio espacio de memoria, protegido del resto del sistema. Esto evita que un programa afecte directamente a otros o al sistema operativo.
+
+El espacio del kernel, en cambio, es donde corre el núcleo de Linux. Aquí también se ejecutan los módulos del kernel y los controladores de dispositivos. Tiene acceso completo a la memoria del sistema, al hardware y a los recursos críticos. Por eso, se requiere extremo cuidado al desarrollar código para este espacio.
+
+#### 3.Espacio de datos
+El espacio de datos es la región de memoria donde un proceso (programa) guarda sus datos globales y estáticos. Se divide en:
+
+- **.data:** datos globales inicializados.
+
+- **.bss:** datos globales no inicializados.
+
+- **Heap y stack:** también forman parte del uso dinámico de memoria.
+
+Cada proceso tiene su propio espacio de datos, aislado del resto. En el kernel también existe un espacio de datos, pero compartido por todos los componentes del sistema.
+
+### 4.  Drivers. Investigar contenido de /dev
+Los drivers (controladores) son componentes del kernel que permiten que el sistema operativo interactúe con el hardware (disco, teclado, GPU, cámara, etc.). En Linux, estos drivers se reflejan como archivos especiales en el directorio /dev.
+
+El contenido de /dev incluye archivos de dispositivo, que representan hardware o recursos virtuales. Algunos ejemplos comunes:
+
+    /dev/sda: disco principal.
+
+    /dev/tty: terminal activa.
+
+    /dev/null: dispositivo "nulo", descarta todo lo que se escribe en él.
+
+    /dev/random: generador de números aleatorios.
+
+    /dev/video0: webcam.
+
+    /dev/input/mice: entrada de mouse.
+
+Estos archivos son una interfaz entre el espacio de usuario y el kernel. Al leer o escribir desde un archivo en /dev, el sistema operativo en realidad está comunicándose con el driver del dispositivo correspondiente.
+
+![/dev](Imagenes/2-1.png)
 
 ### Desafío N°3
 #### 1. ¿Qué diferencias se pueden observar entre los dos modinfo? 
