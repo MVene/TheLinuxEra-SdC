@@ -1,3 +1,4 @@
+import os
 import time
 import threading
 import queue
@@ -93,8 +94,6 @@ class signalsApp:
                 self.update_plot()  # Refresh the figure
             time.sleep(self.update_interval)
 
-
-
     def read_signal(self):
         # ¡¡¡ELIMINAR ESTA LÍNEA!!!
         # os.lseek(self.device, 0, os.SEEK_SET) 
@@ -124,8 +123,6 @@ class signalsApp:
         self.ax.set_ylim(-1.5, 1.5)
 
         self.canvas.draw()
-
-reader = signalsApp(DEVICE_PATH)
 
 if __name__ == "__main__":
     root = tk.Tk()
