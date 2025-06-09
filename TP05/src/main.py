@@ -3,12 +3,26 @@ import threading
 import math
 import tkinter as tk
 from tkinter import ttk
+import matplotlib
+matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+import fcntl
+import struct
+import os
+
+# Equivalent of _IO('k', 0) and _IO('k', 1)
+TP_IOC_MAGIC = ord('k')
+def _IO(magic, nr):
+    return (magic << 8) | nr
+
+TP_SELECT_SIGNAL1 = _IO(TP_IOC_MAGIC, 0)
+TP_SELECT_SIGNAL2 = _IO(TP_IOC_MAGIC, 1)
 
 class signalsApp:
     def __init__(self, root):
         self.root = root
+        self.device = os.open("/dev/tp_driver", os.O_RDWR)
         self.running = True
         self.paused = False
         self.signal_data = []
@@ -64,16 +78,27 @@ class signalsApp:
         self.start_time = time.time()
         self.status_label.config(text=f"Signal {signal_id} selected and started.")
 
+        try:
+            if signal_id == 1:
+                fcntl.ioctl(self.device, TP_SELECT_SIGNAL1)
+            elif signal_id == 2:
+                fcntl.ioctl(self.device, TP_SELECT_SIGNAL2)
+        except Exception as e:
+            print(f"Failed to ioctl to driver: {e}")
+        
+
     def update_loop(self):
         while self.running:
             if not self.paused:
                 t = time.time() - self.start_time
                 self.time_data.append(t)
 
-                if self.active_signal == 1:
-                    val = math.sin(2 * math.pi * 1 * t)
+                raw = os.read(self.device, 1)
+                print(f"Read: {raw}")
+                if raw == b'1':
+                    val = 1
                 else:
-                    val = math.cos(2 * math.pi * 1 * t)
+                    val = 0
 
                 self.signal_data.append(val)
 

@@ -86,36 +86,31 @@ static ssize_t my_read(struct file *f, char __user *buf, size_t len, loff_t *off
     char value_char;
     int gpio_level;
 
-    if (*off != 0) {
-        return 0; // EOF si ya se leyó una vez en esta sesión
+    if (len < 1) {
+        return -EINVAL;
     }
 
-    if (current_signal == 1) {
-        gpio_num = SIGNAL1_GPIO;
-    } else {
-        gpio_num = SIGNAL2_GPIO;
-    }
+    // Determine which GPIO to read
+    gpio_num = (current_signal == 1) ? SIGNAL1_GPIO : SIGNAL2_GPIO;
 
     if (!gpio_base_addr) {
-        printk(KERN_ERR "tp_driver: Error: gpio_base_addr no está mapeado.\n");
+        printk(KERN_ERR "tp_driver: Error: gpio_base_addr not mapped.\n");
         return -EFAULT;
     }
+
     gpio_level = gpio_get_level(gpio_num);
     value_char = (gpio_level == 1) ? '1' : '0';
 
-    printk(KERN_INFO "tp_driver: read() - Leyendo estado de GPIO %d (Senal %d): %c\n",
+    printk(KERN_INFO "tp_driver: read() - GPIO %d (Signal %d): %c\n",
            gpio_num, current_signal, value_char);
-
-    if (len < 1) {
-        return -EINVAL; // Invalid argument
-    }
 
     if (copy_to_user(buf, &value_char, 1) != 0) {
         return -EFAULT;
-    } else {
-        (*off)++;
-        return 1;
     }
+
+    *off = 0;  // Always reset offset so future reads work
+
+    return 1;  // Always return 1 byte
 }
 
 // my_write() no se modifica
