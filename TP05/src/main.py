@@ -29,7 +29,7 @@ class signalsApp:
         self.time_data = []
         self.start_time = time.time()
         self.active_signal = 1
-        self.update_interval = 0.02
+        self.update_interval = 0.01
 
         self.create_widgets()
 
@@ -59,10 +59,20 @@ class signalsApp:
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("Amplitude")
 
-        self.line, = self.ax.plot([], [], lw=2)
+        self.ax.set_facecolor("white")  # fondo del gráfico
+        self.fig.patch.set_facecolor("white")  # fondo fuera del gráfico (opcional)
+        self.ax.tick_params(colors='black')  # color de los números de los ejes
+        self.ax.xaxis.label.set_color('black')  # color del label del eje x
+        self.ax.yaxis.label.set_color('black')  # color del label del eje y
+        self.ax.title.set_color('black')  # color del título
+
+        self.ax.grid(True, color='black', linestyle='--', linewidth=0.5)
+
+        self.line, = self.ax.plot([], [], lw=2, color="maroon")
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.main_frame)
         self.canvas.draw()
+        self.fig.tight_layout()
         self.canvas.get_tk_widget().grid(row=3, column=0, columnspan=2, pady=10)
 
     def select_signal1(self):
@@ -115,10 +125,10 @@ class signalsApp:
         self.line.set_data(self.time_data, self.signal_data)
         if self.time_data:
             self.ax.set_xlim(max(0, self.time_data[-1] - 5), self.time_data[-1])
-        self.ax.set_ylim(-1.5, 1.5)
+        self.ax.set_ylim(-0.5, 1.5)
         self.canvas.draw()
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = signalsApp(root)
-    root.mainloop()
+    root.mainloop()                

@@ -8,8 +8,8 @@
 #include <linux/cdev.h>
 #include <linux/uaccess.h>
 #include <linux/ioctl.h>
-#include <asm/io.h>         // Para ioremap, iounmap, readl, writel
-#include <linux/ioport.h>   // Para request_mem_region, release_mem_region
+#include <asm/io.h>         
+#include <linux/ioport.h>   
 
 // --- Definiciones para los comandos ioctl ---
 #define TP_IOC_MAGIC 'k'
@@ -42,8 +42,8 @@ static struct class *cl;    // Variable global para la clase del dispositivo
 static void __iomem *gpio_base_addr;
 
 // --- Pines GPIO a usar para las señales (Números GPIO Broadcom) ---
-#define SIGNAL1_GPIO 17 // Ejemplo: GPIO 17 (Pin físico 11)
-#define SIGNAL2_GPIO 27 // Ejemplo: GPIO 27 (Pin físico 13)
+#define SIGNAL1_GPIO 529 // Ejemplo: GPIO 17 (Pin físico 11)
+#define SIGNAL2_GPIO 539 // Ejemplo: GPIO 27 (Pin físico 13)
 
 // --- Funciones auxiliares para GPIO ---
 // Función para configurar un pin GPIO como INPUT
