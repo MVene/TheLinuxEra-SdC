@@ -1,7 +1,5 @@
 #include <linux/module.h>
-#include <linux/version.h>
 #include <linux/kernel.h>
-#include <linux/types.h>
 #include <linux/kdev_t.h>
 #include <linux/fs.h>
 #include <linux/device.h>
@@ -30,20 +28,14 @@ static struct class *cl;    // Variable global para la clase del dispositivo
 #define GPIO_BASE (BCM2711_PERI_BASE + 0x200000)
 // Tamaño del bloque de memoria GPIO a mapear
 #define GPIO_SIZE 0xB4 // El tamaño necesario para los registros GPFSEL y GPLEV
-
-// Offsets de los registros GPIO dentro del bloque mapeado (desde GPIO_BASE)
-#define GPFSEL0_OFFSET 0x00 // GPIO Function Select 0 (Pines 0-9)
-#define GPFSEL1_OFFSET 0x04 // GPIO Function Select 1 (Pines 10-19)
-#define GPFSEL2_OFFSET 0x08 // GPIO Function Select 2 (Pines 20-29)
-// ... otros GPFSEL hasta GPFSEL5
-#define GPLEV0_OFFSET  0x34 // GPIO Pin Level 0 (Pines 0-31)
+#define GPLEV0_OFFSET  0x34 
 
 // Puntero a la dirección de memoria virtual mapeada de los GPIOs
 static void __iomem *gpio_base_addr;
 
-// --- Pines GPIO a usar para las señales (Números GPIO Broadcom) ---
-#define SIGNAL1_GPIO 529 // Ejemplo: GPIO 17 (Pin físico 11)
-#define SIGNAL2_GPIO 539 // Ejemplo: GPIO 27 (Pin físico 13)
+// --- Pines GPIO a usar para las señales ---
+#define SIGNAL1_GPIO 529 // GPIO 17 (Pin físico 11)
+#define SIGNAL2_GPIO 539 // GPIO 27 (Pin físico 13)
 
 // --- Funciones auxiliares para GPIO ---
 // Función para configurar un pin GPIO como INPUT
@@ -167,18 +159,9 @@ static int __init tp_driver_init(void)
         return ret;
     }
 
-    // --- Inicialización y mapeo de GPIOs ---
-    /*if (!request_mem_region(GPIO_BASE, GPIO_SIZE, "tp_driver_gpio")) {
-        printk(KERN_ALERT "tp_driver: Fallo al solicitar region de memoria GPIO (%x).\n", GPIO_BASE);
-        unregister_chrdev_region(first, 1);
-        return -EBUSY;
-    }*/
-
     gpio_base_addr = (unsigned int *)ioremap(GPIO_BASE, GPIO_SIZE);
     if (!gpio_base_addr) {
         printk(KERN_ALERT "tp_driver: Fallo al mapear memoria GPIO.\n");
-        //release_mem_region(GPIO_BASE, GPIO_SIZE); // CORREGIDO
-        //unregister_chrdev_region(first, 1);
         return -ENOMEM;
     }
     printk(KERN_INFO "GPIO SIGNAL: Successfully mapped GPIO memory.\n");
@@ -192,7 +175,6 @@ static int __init tp_driver_init(void)
     {
         printk(KERN_ALERT "tp_driver: Fallo al crear la clase de dispositivo\n");
         if (gpio_base_addr) iounmap(gpio_base_addr);
-        release_mem_region(GPIO_BASE, GPIO_SIZE); // CORREGIDO
         unregister_chrdev_region(first, 1);
         return PTR_ERR(cl);
     }
@@ -202,7 +184,6 @@ static int __init tp_driver_init(void)
         printk(KERN_ALERT "tp_driver: Fallo al crear el dispositivo\n");
         class_destroy(cl);
         if (gpio_base_addr) iounmap(gpio_base_addr);
-        release_mem_region(GPIO_BASE, GPIO_SIZE); // CORREGIDO
         unregister_chrdev_region(first, 1);
         return PTR_ERR(dev_ret);
     }
@@ -214,7 +195,6 @@ static int __init tp_driver_init(void)
         device_destroy(cl, first);
         class_destroy(cl);
         if (gpio_base_addr) iounmap(gpio_base_addr);
-        release_mem_region(GPIO_BASE, GPIO_SIZE); // CORREGIDO
         unregister_chrdev_region(first, 1);
         return ret;
     }
@@ -234,11 +214,10 @@ static void __exit tp_driver_exit(void)
         iounmap(gpio_base_addr);
         printk(KERN_INFO "tp_driver: Memoria GPIO desmapeada.\n");
     }
-    release_mem_region(GPIO_BASE, GPIO_SIZE); // CORREGIDO
     printk(KERN_INFO "tp_driver: Region de memoria GPIO liberada.\n");
     // --- Fin de desinicialización de GPIOs ---
 
-    printk(KERN_INFO "tp_driver: dice Adios mundo cruel..!!\n");
+    printk(KERN_INFO "tp_driver: Adios mundo cruel..!!\n");
 }
 
 // --- Registro de las funciones de inicialización y salida del módulo ---
