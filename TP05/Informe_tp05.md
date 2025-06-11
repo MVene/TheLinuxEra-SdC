@@ -119,9 +119,37 @@ Para poner en marcha este sistema, se siguieron los siguientes pasos generales:
 
 - **Generación de Señales (Arduino):** El Arduino se programó para generar las dos señales digitales (pulsos cuadrados con distintos duty cycle) en los pines correspondientes que se conectarán a los GPIO 17 y 27 de la Raspberry Pi.
 
+  Script de Arduino:
+
+  ````
+
+  const int pinA = 9; 
+  const int pinB = 10; 
+
+  void setup() {
+    pinMode(pinA, OUTPUT);
+    pinMode(pinB, OUTPUT);
+  }
+
+  void loop() {
+
+    digitalWrite(pinA, HIGH); 
+    digitalWrite(pinB, HIGH); 
+    delay(250);
+    digitalWrite(pinA, LOW); 
+    delay(500);
+    digitalWrite(pinB, LOW);   
+    delay(250);
+  }
+  ````
+
 - **Cableado:** Se conectaron los pines de salida del Arduino que generan las señales a los pines GPIO 17 (Signal 1) y GPIO 27 (Signal 2) de la Raspberry Pi.
 
+<p align="center">
+
 ![alt text](imagenes/2.png)
+
+<p>
 
 - **Conexión a la Raspberry Pi:** 
 La forma más común de conectarse a la Raspberry Pi para trabajar es a través de SSH (Secure Shell). Se escaneó la red local para descubrir dispositivos, utilizando la herramienta nmap en Linux con un comando como nmap -sn 192.168.1.10/24, donde 192.168.1.10/24 representaba la subred a escanear. 
@@ -132,7 +160,11 @@ Se aseguró que SSH estuviera habilitado en la Raspberry Pi (pudo hacerse desde 
 
 - **Carga del Módulo:** Se carga el driver en el kernel con ``sudo insmod tp_sensor_driver.ko``. Esto creará el nodo de dispositivo ``/dev/tp_driver``.
 
+<p align="center">
+
   ![alt text](imagenes/3.jpeg)
+
+</p>
 
     A continuación se muestra la salida del comando ``dmesg | tail`` ejecutado en la terminal de la Raspberry Pi después de la carga del módulo del driver (``tp_sensor_driver.ko``). Este comando permite visualizar los últimos mensajes del kernel log, donde se registran los estados y operaciones importantes.
 
@@ -146,7 +178,11 @@ En la terminal local (no en la de la Raspberry Pi), se realizó la conexión usa
 
     Una vez conectado por SSH con X Forwarding habilitado, se pudo ejecutar la aplicación en la Raspberry Pi: ``python3 user_app.py``. La ventana gráfica de la aplicación apareció en el monitor de la computadora local.
 
-![alt text](signal_selector.gif)
+<p align="center">
+
+![alt text](imagenes/signal_selector.gif)
+
+</p>
 
 ## 6. Conclusión
 
