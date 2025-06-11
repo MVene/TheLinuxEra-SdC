@@ -170,7 +170,11 @@ Se aseguró que SSH estuviera habilitado en la Raspberry Pi (pudo hacerse desde 
 
     Como se observa, el driver ``tp_driver`` informó de su registro exitoso. Posteriormente, se confirmó el mapeo correcto de la memoria GPIO. Finalmente, los mensajes tp_driver: GPIO 529 configurado como INPUT y tp_driver: GPIO 539 configurado como INPUT verificaron que los pines GPIO designados para las señales (GPIO 17 y GPIO 27 respectivamente) fueron correctamente inicializados como entradas, listos para sensar las señales externas.
 
-    ![alt text](imagenes/1.png)
+<p align="center">
+
+  ![alt text](imagenes/1.png)
+
+</p>
 
 - **Ejecución de la Aplicación y Visualización Remota:**
 Para ver la ventana gráfica de ``user_app.py`` sin necesidad de conectar un monitor a la Raspberry Pi, se utilizó la redirección X11 (X Forwarding) a través de SSH.
@@ -178,7 +182,10 @@ En la terminal local (no en la de la Raspberry Pi), se realizó la conexión usa
 
     Una vez conectado por SSH con X Forwarding habilitado, se pudo ejecutar la aplicación en la Raspberry Pi: ``python3 user_app.py``. La ventana gráfica de la aplicación apareció en el monitor de la computadora local.
 
-![alt text](signal_selector.gif)
+<p align="center">
+
+![alt text](imagenes/signal_selector.gif)
+<>/p
 
 ## 6. Conclusión
 
