@@ -178,11 +178,7 @@ En la terminal local (no en la de la Raspberry Pi), se realizó la conexión usa
 
     Una vez conectado por SSH con X Forwarding habilitado, se pudo ejecutar la aplicación en la Raspberry Pi: ``python3 user_app.py``. La ventana gráfica de la aplicación apareció en el monitor de la computadora local.
 
-<p align="center">
-
-![alt text](imagenes/signal_selector.gif)
-
-</p>
+![alt text](signal_selector.gif)
 
 ## 6. Conclusión
 
