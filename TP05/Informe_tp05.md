@@ -2,15 +2,15 @@
 
 ## 1. Introducción
  
-En el ámbito de la interacción hardware-software, los drivers de dispositivos actúan como el puente esencial que permite a los sistemas operativos comunicarse y controlar los periféricos conectados. Este informe detalla el diseño y la implementación de un Character Device Driver (CDD) para una Raspberry Pi 4, denominado tp_sensor_driver.c, junto con una aplicación de usuario en Python, user_app.py. El objetivo principal es sensar y visualizar dos señales externas, generadas en este caso por un Arduino, a través de los pines GPIO de la Raspberry Pi, permitiendo al usuario seleccionar cuál de las señales desea monitorear y graficar en tiempo real.
+En el ámbito de la interacción hardware-software, los drivers de dispositivos actúan como el puente esencial que permite a los sistemas operativos comunicarse y controlar los periféricos conectados. Este informe detalla el diseño y la implementación de un Character Device Driver (CDD) para una Raspberry Pi 4, denominado ``tp_sensor_driver.c``, junto con una aplicación de usuario en Python, ``user_app.py``. El objetivo principal es sensar y visualizar dos señales externas, generadas en este caso por un Arduino, a través de los pines GPIO de la Raspberry Pi, permitiendo al usuario seleccionar cuál de las señales desea monitorear y graficar en tiempo real.
 
 ## 2. Fundamentos de un Driver de Dispositivo de Carácter
 
-Un driver de dispositivo de carácter es un tipo de driver de Linux que maneja dispositivos que transfieren datos como un flujo de bytes, sin estructura de bloques. Son ideales para dispositivos como puertos seriales, teclados o, en nuestro caso, entradas GPIO. La interacción con estos drivers se realiza a través de operaciones de archivo estándar como open(), read(), write(), y ioctl().
+Un driver de dispositivo de carácter es un tipo de driver de Linux que maneja dispositivos que transfieren datos como un flujo de bytes, sin estructura de bloques. Son ideales para dispositivos como puertos seriales, teclados o, en nuestro caso, entradas GPIO. La interacción con estos drivers se realiza a través de operaciones de archivo estándar como ``open()``, ``read()``, ``write()`` y ``ioctl()``.
 
-## 3. Diseño e Implementación del Driver de Carácter (tp_sensor_driver.c)
+## 3. Diseño e Implementación del Driver de Carácter (``tp_sensor_driver.c``)
 
-El ``tp_sensor_driver.c`` es el corazón de este proyecto, encargado de interactuar directamente con los pines GPIO de la Raspberry Pi 4.
+El ``tp_sensor_driver.c`` es el encargado de interactuar directamente con los pines GPIO de la Raspberry Pi 4.
 
 ### 3.1. Definiciones y Configuración Inicial
 
@@ -24,7 +24,7 @@ Se definen dos comandos ioctl:
 
 - **TP_SELECT_SIGNAL2:** Para seleccionar la lectura de la Señal 2.
 
-Estos comandos utilizan un "número mágico" (TP_IOC_MAGIC 'k') para evitar colisiones con otros comandos del sistema.
+Estos comandos utilizan un "número mágico" (``TP_IOC_MAGIC 'k'``) para evitar colisiones con otros comandos del sistema.
 
 **Variables Globales:**
 
@@ -36,11 +36,11 @@ Estos comandos utilizan un "número mágico" (TP_IOC_MAGIC 'k') para evitar coli
 
 Dado que los pines GPIO en la Raspberry Pi se controlan a través de registros de memoria, el driver necesita mapear esta región de memoria al espacio de direcciones virtuales del kernel.
 
-**Direcciones Base:** Se definen BCM2711_PERI_BASE y GPIO_BASE para la Raspberry Pi 4 (BCM2711).
+**Direcciones Base:** Se definen ``BCM2711_PERI_BASE`` y ``GPIO_BASE`` para la Raspberry Pi 4 (BCM2711).
 
 **GPIO_SIZE:** El tamaño de la región de memoria GPIO a mapear es crucial para acceder a los registros de selección de función (GPFSEL) y de nivel de entrada (GPLEV).
 
-**gpio_base_addr:** Un puntero a la dirección de memoria virtual mapeada, obtenido mediante ioremap(), lo que permite al driver acceder a los registros GPIO como si fueran variables en memoria.
+**gpio_base_addr:** Un puntero a la dirección de memoria virtual mapeada, obtenido mediante ``ioremap()``, lo que permite al driver acceder a los registros GPIO como si fueran variables en memoria.
 
 ### 3.3. Control de Pines GPIO
 
@@ -68,50 +68,50 @@ Utiliza ``copy_to_user()`` para transferir el carácter al búfer de la aplicaci
 
 - **tp_sensor_ioctl(struct file f, unsigned int cmd, unsigned long arg):** Maneja los comandos ioctl de la aplicación de usuario.
 Reinicia f->f_pos a 0 para asegurar un comportamiento consistente.
-Si el comando es TP_SELECT_SIGNAL1, establece current_signal a 1.
-Si el comando es TP_SELECT_SIGNAL2, establece current_signal a 2.
+Si el comando es ``TP_SELECT_SIGNAL1``, establece current_signal a 1.
+Si el comando es ``TP_SELECT_SIGNAL2``, establece current_signal a 2.
 Registra mensajes informativos sobre la señal seleccionada.
 
 ### 3.5. Funciones de Inicialización y Salida del Módulo
 
 - **tp_driver_init(void):** La función de inicialización del módulo.
 Asigna dinámicamente un número de dispositivo de carácter.
-Mapea la memoria GPIO usando ioremap().
-Configura los pines SIGNAL1_GPIO y SIGNAL2_GPIO (pines 529 y 539, equivalentes a GPIO17 y GPIO27 en el BCM2711) como entradas.
-Crea una clase de dispositivo y un nodo de dispositivo (/dev/tp_driver) para que la aplicación de usuario pueda acceder al driver.
+Mapea la memoria GPIO usando ``ioremap()``.
+Configura los pines ``SIGNAL1_GPIO`` y ``SIGNAL2_GPIO`` (pines 529 y 539, equivalentes a GPIO17 y GPIO27 en el BCM2711) como entradas.
+Crea una clase de dispositivo y un nodo de dispositivo (``/dev/tp_driver``) para que la aplicación de usuario pueda acceder al driver.
 Inicializa y añade el cdev con las operaciones de archivo definidas.
 
 - **tp_driver_exit(void):** La función de salida (limpieza) del módulo.
-Desregistra el cdev, destruye el dispositivo y la clase. Desmapea la memoria GPIO usando iounmap() para liberar los recursos.
+Desregistra el cdev, destruye el dispositivo y la clase. Desmapea la memoria GPIO usando ``iounmap()`` para liberar los recursos.
 
-## 4. Diseño e Implementación de la Aplicación de Usuario (user_app.py)
+## 4. Diseño e Implementación de la Aplicación de Usuario (``user_app.py``)
 La aplicación ``user_app.py`` es una interfaz gráfica de usuario (GUI) desarrollada con Tkinter y Matplotlib que interactúa con el driver para sensar y visualizar las señales.
 
 ### 4.1. Interacción con el Driver
 
-- **Apertura del Dispositivo:** La aplicación abre el dispositivo /dev/tp_driver en modo lectura/escritura (os.O_RDWR).
+- **Apertura del Dispositivo:** La aplicación abre el dispositivo ``/dev/tp_driver`` en modo lectura/escritura (``os.O_RDWR``).
 
-- **Comandos ioctl:** Recrea las definiciones de los comandos ioctl del driver (TP_SELECT_SIGNAL1, TP_SELECT_SIGNAL2) y utiliza fcntl.ioctl() para enviarlos al driver, indicándole qué señal debe leer.
+- **Comandos ioctl:** Recrea las definiciones de los comandos ioctl del driver (``TP_SELECT_SIGNAL1``, ``TP_SELECT_SIGNAL2``) y utiliza ``fcntl.ioctl()`` para enviarlos al driver, indicándole qué señal debe leer.
 
-- **Lectura de Señales:** La función os.read(self.device, 1) se encarga de leer un byte del driver. Este byte será '0' o '1', representando el estado del pin GPIO.
+- **Lectura de Señales:** La función ``os.read(self.device, 1)`` se encarga de leer un byte del driver. Este byte será '0' o '1', representando el estado del pin GPIO.
 
 ### 4.2. Interfaz de Usuario y Gráficos
 
 - **tkinter:** Utilizado para construir la interfaz gráfica, incluyendo botones para seleccionar las señales y etiquetas de estado.
 
-- **matplotlib:** Integrado con Tkinter (FigureCanvasTkAgg) para generar y mostrar el gráfico en tiempo real.
+- **matplotlib:** Integrado con Tkinter (``FigureCanvasTkAgg``) para generar y mostrar el gráfico en tiempo real.
 Se configura el título, etiquetas de los ejes (Time (s) en abscisas, Amplitude en ordenadas), y colores del gráfico.
-La línea del gráfico (self.line) se actualiza continuamente con los nuevos puntos de datos.
+La línea del gráfico (``self.line``) se actualiza continuamente con los nuevos puntos de datos.
 
-- **update_loop():** Un hilo separado (threading.Thread) ejecuta esta función para realizar la lectura continua del driver y actualizar los datos del gráfico sin bloquear la interfaz de usuario.
+- **update_loop():** Un hilo separado (``threading.Thread``) ejecuta esta función para realizar la lectura continua del driver y actualizar los datos del gráfico sin bloquear la interfaz de usuario.
 
 - **start_signal(self, signal_id):**
 Se invoca cuando el usuario selecciona una señal (1 o 2).
-Borra los datos previos del gráfico (signal_data y time_data).
-Reinicia el tiempo de inicio (start_time).
+Borra los datos previos del gráfico (``signal_data`` y ``time_data``).
+Reinicia el tiempo de inicio (``start_time``).
 Envía el comando ioctl correspondiente al driver para que cambie la señal a leer.
 
-- **update_plot():** Actualiza los datos de la línea del gráfico y ajusta los límites del eje X para mostrar una ventana temporal deslizante de las últimas 500 muestras. El eje Y se fija entre -0.5 y 1.5, lo cual es adecuado para señales binarias (0 o 1).
+- **update_plot():** Actualiza los datos de la línea del gráfico y ajusta los límites del eje X para mostrar una ventana temporal deslizante de las últimas 500 muestras. El eje Y se fija entre -0.5 y 1.5.
 
 ## 5. Configuración y Ejecución
 
@@ -149,11 +149,11 @@ Para poner en marcha este sistema, se siguieron los siguientes pasos generales:
 
 ![alt text](imagenes/2.png)
 
-<p>
+</p>
 
 - **Conexión a la Raspberry Pi:** 
-La forma más común de conectarse a la Raspberry Pi para trabajar es a través de SSH (Secure Shell). Se escaneó la red local para descubrir dispositivos, utilizando la herramienta nmap en Linux con un comando como nmap -sn 192.168.1.10/24, donde 192.168.1.10/24 representaba la subred a escanear. 
-Desde la computadora principal Linux, se abrió una terminal y se utilizó el comando ssh ``ssh -X pi@<dirección_ip_raspberry>``. La contraseña predeterminada fue raspberry.
+La forma más común de conectarse a la Raspberry Pi para trabajar es a través de SSH (Secure Shell). Se escaneó la red local para descubrir dispositivos, utilizando la herramienta nmap en Linux con un comando como ``nmap -sn 192.168.1.10/24``, donde 192.168.1.10/24 representaba la subred a escanear. 
+Desde la computadora principal Linux, se abrió una terminal y se utilizó el comando ``ssh -X pi@<dirección_ip_raspberry>``.
 Se aseguró que SSH estuviera habilitado en la Raspberry Pi (pudo hacerse desde raspi-config).
 
 - **Compilación del Driver:** Compilar ``tp_sensor_driver.c`` en la Raspberry Pi utilizando el toolchain del kernel.
@@ -166,9 +166,9 @@ Se aseguró que SSH estuviera habilitado en la Raspberry Pi (pudo hacerse desde 
 
 </p>
 
-    A continuación se muestra la salida del comando ``dmesg | tail`` ejecutado en la terminal de la Raspberry Pi después de la carga del módulo del driver (``tp_sensor_driver.ko``). Este comando permite visualizar los últimos mensajes del kernel log, donde se registran los estados y operaciones importantes.
-
-    Como se observa, el driver ``tp_driver`` informó de su registro exitoso. Posteriormente, se confirmó el mapeo correcto de la memoria GPIO. Finalmente, los mensajes tp_driver: GPIO 529 configurado como INPUT y tp_driver: GPIO 539 configurado como INPUT verificaron que los pines GPIO designados para las señales (GPIO 17 y GPIO 27 respectivamente) fueron correctamente inicializados como entradas, listos para sensar las señales externas.
+   A continuación se muestra la salida del comando ``dmesg | tail`` ejecutado en la terminal de la Raspberry Pi después de la carga del módulo del driver (``tp_sensor_driver.ko``). Este comando permite visualizar los últimos mensajes del kernel log, donde se registran los estados y operaciones importantes.
+   
+   Como se observa, el driver ``tp_driver`` informó de su registro exitoso. Posteriormente, se confirmó el mapeo correcto de la memoria GPIO. Finalmente, los mensajes tp_driver: GPIO 529 configurado como INPUT y tp_driver: GPIO 539 configurado como INPUT verificaron que los pines GPIO designados para las señales (GPIO 17 y GPIO 27 respectivamente) fueron correctamente inicializados como entradas, listos para sensar las señales externas.
 
 <p align="center">
 
@@ -185,8 +185,8 @@ En la terminal local (no en la de la Raspberry Pi), se realizó la conexión usa
 <p align="center">
 
 ![alt text](imagenes/signal_selector.gif)
-<>/p
+</p>
 
 ## 6. Conclusión
 
-Este proyecto demuestra con éxito el desarrollo de un driver de carácter personalizado para Linux y su integración con una aplicación de usuario para la lectura y visualización de señales GPIO generadas por un Arduino en tiempo real. La implementación cumple con los requisitos de la consigna al permitir la selección y el graficado dinámico de dos señales externas, sirviendo como una base sólida para futuros desarrollos en la interacción hardware-software a bajo nivel.
+Este proyecto permitió consolidar conocimientos fundamentales sobre programación a nivel de kernel, manejo de memoria y comunicación entre espacio usuario y kernel. Además, la integración con una aplicación de usuario en Python permitió validar el correcto funcionamiento del driver y su utilidad práctica para la interacción hardware-software. La experiencia adquirida refuerza la comprensión de los mecanismos internos del sistema operativo Linux y la importancia de diseñar controladores eficientes y seguros para el manejo de hardware externo. 
